@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="SOUTHRUNE">
+<meta name="theme-color" content="#000000">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+<!--PAGE-->
+<title>SOUTHRUNE</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<style>
+/* Layout: tela do jogo 4:3 em pixel art; no toque, direcional à esquerda e botões Z/X/C à direita. */
+:root {
+  color-scheme: dark;
+  --bg: #000000;
+  --fg: #ffffff;
+  --muted: #8a8aa8;
+  --panel: #0d0718;
+  --line: #ffffff;
+  --accent: #ff9a1f;
+  --hot: #ffff00;
+  --soul: #ff1a1a;
+  --font-ui: "Press Start 2P", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-hint: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+html { height: 100%; box-sizing: border-box; background: var(--bg); }
+*, *::before, *::after { box-sizing: inherit; }
+body {
+  height: 100%; margin: 0; overflow: hidden; background: var(--bg); color: var(--fg);
+  touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent; overscroll-behavior: none;
+}
+#app {
+  height: 100%; display: flex; flex-direction: column; position: relative;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 8px;
+}
+#stage { flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; position: relative; }
+#screen { display: block; background: var(--bg); image-rendering: pixelated; image-rendering: crisp-edges; outline: none; }
+#fs {
+  position: absolute; top: 4px; right: 0; width: 34px; height: 34px; border: 2px solid var(--line); border-radius: 4px;
+  background: rgba(0, 0, 0, 0.55); color: var(--fg); font: 14px/1 var(--font-hint); opacity: 0.45; cursor: pointer; padding: 0;
+}
+#fs:hover, #fs:focus-visible { opacity: 1; outline: 2px solid var(--hot); outline-offset: 2px; }
+#hint {
+  flex: 0 0 auto; text-align: center; color: var(--muted); font: 12px/1.6 var(--font-hint); letter-spacing: 0.04em;
+  padding-top: 6px; text-wrap: balance;
+}
+#hint b { color: var(--fg); font-weight: 700; }
+#controls { display: none; }
+body.touch #hint { display: none; }
+body.touch #controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+body.touch.portrait #stage { flex: 0 0 auto; }
+body.touch.portrait #controls { flex: 1 1 auto; min-height: 0; padding: 8px 4px; }
+body.touch.landscape #controls {
+  position: absolute; left: max(10px, env(safe-area-inset-left, 0px)); right: max(10px, env(safe-area-inset-right, 0px));
+  bottom: 10px; pointer-events: none;
+}
+body.touch.landscape #controls > * { pointer-events: auto; opacity: 0.6; }
+
+/* Direcional em cruz */
+#dpad { position: relative; width: 156px; height: 156px; flex: 0 0 auto; touch-action: none; }
+#dpad .arm { position: absolute; background: var(--panel); border: 2px solid var(--line); }
+#dpad .h { left: 0; right: 0; top: 50px; height: 56px; border-radius: 6px; }
+#dpad .v { top: 0; bottom: 0; left: 50px; width: 56px; border-radius: 6px; }
+#dpad .hub { position: absolute; left: 52px; top: 52px; width: 52px; height: 52px; background: var(--panel); }
+#dpad .arr { position: absolute; width: 0; height: 0; border: 10px solid transparent; }
+#dpad .up { left: 68px; top: 10px; border-bottom: 14px solid var(--fg); border-top-width: 0; }
+#dpad .down { left: 68px; bottom: 10px; border-top: 14px solid var(--fg); border-bottom-width: 0; }
+#dpad .left { top: 68px; left: 10px; border-right: 14px solid var(--fg); border-left-width: 0; }
+#dpad .right { top: 68px; right: 10px; border-left: 14px solid var(--fg); border-right-width: 0; }
+#dpad.on-up .up { border-bottom-color: var(--hot); }
+#dpad.on-down .down { border-top-color: var(--hot); }
+#dpad.on-left .left { border-right-color: var(--hot); }
+#dpad.on-right .right { border-left-color: var(--hot); }
+#dpad .knob {
+  position: absolute; left: 62px; top: 62px; width: 32px; height: 32px; border-radius: 50%;
+  background: var(--soul); clip-path: polygon(50% 100%, 0 38%, 12% 8%, 34% 4%, 50% 22%, 66% 4%, 88% 8%, 100% 38%);
+  transform: none; transition: transform 60ms linear; pointer-events: none;
+}
+
+/* Botões Z / X / C */
+#btns { display: grid; grid-template-columns: repeat(2, auto); grid-template-rows: auto auto; gap: 10px 14px; align-items: center; flex: 0 0 auto; }
+.btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--line); background: var(--panel); color: var(--fg);
+  font-family: var(--font-ui); padding: 0; touch-action: none; cursor: pointer;
+}
+.btn b { font-size: 16px; font-weight: 400; }
+.btn small { font-size: 6px; letter-spacing: 0.06em; color: var(--muted); }
+.btn.on { background: var(--hot); color: #000; }
+.btn.on small { color: #000; }
+.btn:focus-visible { outline: 2px solid var(--hot); outline-offset: 3px; }
+#bC { grid-column: 2; grid-row: 1; justify-self: center; width: 54px; height: 54px; }
+#bX { grid-column: 1; grid-row: 2; }
+#bZ { grid-column: 2; grid-row: 2; width: 76px; height: 76px; border-color: var(--hot); }
+#bZ b { font-size: 20px; }
+
+@media (max-height: 420px) and (orientation: landscape) {
+  #dpad { transform: scale(0.85); transform-origin: left bottom; }
+  #btns { transform: scale(0.85); transform-origin: right bottom; }
+}
+@media (prefers-reduced-motion: reduce) { #dpad .knob { transition: none; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="stage">
+    <canvas id="screen" width="320" height="240" tabindex="0" role="img" aria-label="Tela do jogo SOUTHRUNE"></canvas>
+    <button id="fs" type="button" aria-label="Tela cheia" title="Tela cheia">⛶</button>
+  </div>
+  <div id="hint"><b>Setas</b> andar · <b>Z</b>/<b>Enter</b> confirmar · <b>X</b>/<b>Shift</b> voltar e correr · <b>C</b> menu</div>
+  <div id="controls">
+    <div id="dpad" aria-label="Direcional">
+      <span class="arm h"></span><span class="arm v"></span><span class="hub"></span>
+      <span class="arr up"></span><span class="arr down"></span><span class="arr left"></span><span class="arr right"></span>
+      <span class="knob"></span>
+    </div>
+    <div id="btns">
+      <button id="bC" class="btn" type="button" data-b="menu" aria-label="Menu (C)"><b>C</b><small>MENU</small></button>
+      <button id="bX" class="btn" type="button" data-b="cancel" aria-label="Voltar e correr (X)"><b>X</b><small>VOLTAR</small></button>
+      <button id="bZ" class="btn" type="button" data-b="confirm" aria-label="Confirmar (Z)"><b>Z</b><small>OK</small></button>
+    </div>
+  </div>
+</div>
+<script src="src/00_core.js"></script>
+<script src="src/01_fontdata.js"></script>
+<script src="src/01_font.js"></script>
+<script src="src/02_audio.js"></script>
+<script src="src/03_gfx_chars.js"></script>
+<script src="src/03_gfx_enemies.js"></script>
+<script src="src/03_gfx_env.js"></script>
+<script src="src/04_data.js"></script>
+<script src="src/05_ui.js"></script>
+<script src="src/06_world.js"></script>
+<script src="src/07_battle.js"></script>
+<script src="src/08_enemies.js"></script>
+<script src="src/09_rooms.js"></script>
+<script src="src/10_scenes.js"></script>
+<script src="src/11_main.js"></script>
+<!--/PAGE-->
+</body>
+</html>
