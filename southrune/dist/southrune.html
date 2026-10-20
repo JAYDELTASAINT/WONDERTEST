@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
 <style>
-/* Layout: tela do jogo 4:3 em pixel art; no toque, direcional à esquerda e botões Z/X/C à direita. */
+/* Layout: 4:3 pixel-art game screen; on touch devices, D-pad on the left and Z/X/C buttons on the right. */
 :root {
   color-scheme: dark;
   --bg: #000000;
@@ -66,7 +66,7 @@ body.touch.landscape #controls {
 }
 body.touch.landscape #controls > * { pointer-events: auto; opacity: 0.6; }
 
-/* Direcional em cruz */
+/* D-pad */
 #dpad { position: relative; width: 156px; height: 156px; flex: 0 0 auto; touch-action: none; }
 #dpad .arm { position: absolute; background: var(--panel); border: 2px solid var(--line); }
 #dpad .h { left: 0; right: 0; top: 50px; height: 56px; border-radius: 6px; }
@@ -87,7 +87,7 @@ body.touch.landscape #controls > * { pointer-events: auto; opacity: 0.6; }
   transform: none; transition: transform 60ms linear; pointer-events: none;
 }
 
-/* Botões Z / X / C */
+/* Z / X / C buttons */
 #btns { display: grid; grid-template-columns: repeat(2, auto); grid-template-rows: auto auto; gap: 10px 14px; align-items: center; flex: 0 0 auto; }
 .btn {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
@@ -114,20 +114,20 @@ body.touch.landscape #controls > * { pointer-events: auto; opacity: 0.6; }
 <body>
 <div id="app">
   <div id="stage">
-    <canvas id="screen" width="320" height="240" tabindex="0" role="img" aria-label="Tela do jogo SOUTHRUNE"></canvas>
-    <button id="fs" type="button" aria-label="Tela cheia" title="Tela cheia">⛶</button>
+    <canvas id="screen" width="320" height="240" tabindex="0" role="img" aria-label="SOUTHRUNE game screen"></canvas>
+    <button id="fs" type="button" aria-label="Fullscreen" title="Fullscreen">⛶</button>
   </div>
-  <div id="hint"><b>Setas</b> andar · <b>Z</b>/<b>Enter</b> confirmar · <b>X</b>/<b>Shift</b> voltar e correr · <b>C</b> menu</div>
+  <div id="hint"><b>Arrows</b> move · <b>Z</b>/<b>Enter</b> confirm · <b>X</b>/<b>Shift</b> back &amp; run · <b>C</b> menu</div>
   <div id="controls">
-    <div id="dpad" aria-label="Direcional">
+    <div id="dpad" aria-label="D-pad">
       <span class="arm h"></span><span class="arm v"></span><span class="hub"></span>
       <span class="arr up"></span><span class="arr down"></span><span class="arr left"></span><span class="arr right"></span>
       <span class="knob"></span>
     </div>
     <div id="btns">
       <button id="bC" class="btn" type="button" data-b="menu" aria-label="Menu (C)"><b>C</b><small>MENU</small></button>
-      <button id="bX" class="btn" type="button" data-b="cancel" aria-label="Voltar e correr (X)"><b>X</b><small>VOLTAR</small></button>
-      <button id="bZ" class="btn" type="button" data-b="confirm" aria-label="Confirmar (Z)"><b>Z</b><small>OK</small></button>
+      <button id="bX" class="btn" type="button" data-b="cancel" aria-label="Back and run (X)"><b>X</b><small>BACK</small></button>
+      <button id="bZ" class="btn" type="button" data-b="confirm" aria-label="Confirm (Z)"><b>Z</b><small>OK</small></button>
     </div>
   </div>
 </div>
@@ -2455,38 +2455,38 @@ const BG = {
 
 ;
 'use strict';
-/* Dados do jogo: itens, equipamentos, magias, membros do grupo e estado salvo. */
+/* Dados do jogo: itens, equipamentos, magias, membros do grupo e estado salvo (textos em inglês). */
 
 const ITEMS = {
-  cheesy: { name: 'Cheesy Poofs', type: 'heal', heal: 40, price: 30, sell: 12, desc: 'Salgadinho de queijo. Recupera 40 HP.' },
-  snacky: { name: 'Snacky Cake', type: 'heal', heal: 70, price: 60, sell: 25, desc: 'Bolinho recheado. Recupera 70 HP.' },
-  choco: { name: 'Choc. Quente', type: 'heal', heal: 30, all: true, price: 50, sell: 20, desc: 'Chocolate quente. Recupera 30 HP do grupo todo.' },
-  sopa: { name: 'Sopa da Mãe', type: 'heal', heal: 100, price: 0, sell: 40, desc: 'Receita da mãe do Kyle. Recupera 100 HP.' },
-  bala: { name: 'Bala Revivente', type: 'heal', revive: 0.6, heal: 50, price: 80, sell: 30, desc: 'Revive um aliado caído. Ou cura 50 HP.' },
-  bandaid: { name: 'Band-aid', type: 'heal', heal: 20, price: 15, sell: 5, desc: 'Tem desenho de dinossauro. Recupera 20 HP.' },
-  espada: { name: 'Espada Madeira', type: 'weapon', who: ['stan'], atk: 2, sell: 5, desc: 'Feita de um galho. ATK +2.' },
-  taco: { name: 'Taco de Hóquei', type: 'weapon', who: ['stan'], atk: 5, sell: 40, desc: 'Do time da escola. ATK +5.' },
-  cajado: { name: 'Cajado Verde', type: 'weapon', who: ['kyle'], atk: 1, mag: 2, sell: 5, desc: 'Brilha quando o Kyle se irrita. ATK +1 MAG +2.' },
-  foice: { name: 'Foice Plástica', type: 'weapon', who: ['kenny'], atk: 1, mag: 1, sell: 5, desc: 'De uma loja de fantasias. ATK +1 MAG +1.' },
-  luvas: { name: 'Luvas de Lã', type: 'armor', def: 1, sell: 5, desc: 'Quentinhas. DEF +1.' },
-  cachecol: { name: 'Cachecol', type: 'armor', def: 2, sell: 30, desc: 'Listrado, tricotado pela vovó. DEF +2.' },
-  gorro: { name: 'Gorro Reserva', type: 'armor', def: 1, mag: 1, sell: 20, desc: 'Sempre bom ter um. DEF +1 MAG +1.' },
+  cheesy: { name: 'Cheesy Poofs', type: 'heal', heal: 40, price: 30, sell: 12, desc: "Cheesy Poofs! You're gonna eat 'em up. Heals 40 HP." },
+  snacky: { name: 'Snacky Cake', type: 'heal', heal: 70, price: 60, sell: 25, desc: "Cartman's favorite. He'd kill for one. Heals 70 HP." },
+  choco: { name: 'Hot Cocoa', type: 'heal', heal: 30, all: true, price: 50, sell: 20, desc: 'With tiny marshmallows. Heals 30 HP to everyone.' },
+  sopa: { name: 'Pot Pie', type: 'heal', heal: 100, price: 0, sell: 40, desc: "Made by Cartman's mom. She's so sweet. Heals 100 HP." },
+  bala: { name: 'Weight Gain 4000', type: 'heal', revive: 0.6, heal: 50, price: 80, sell: 30, desc: 'BEEFCAKE! Revives a downed ally, or heals 50 HP.' },
+  bandaid: { name: 'Band-Aid', type: 'heal', heal: 20, price: 15, sell: 5, desc: 'It has dinosaurs on it. Heals 20 HP.' },
+  espada: { name: 'Wooden Sword', type: 'weapon', who: ['stan'], atk: 2, sell: 5, desc: 'Not the Stick of Truth. Just a stick. ATK +2.' },
+  taco: { name: 'Hockey Stick', type: 'weapon', who: ['stan'], atk: 5, sell: 40, desc: 'From the school team. Go Cows! ATK +5.' },
+  cajado: { name: 'Green Staff', type: 'weapon', who: ['kyle'], atk: 1, mag: 2, sell: 5, desc: 'Glows when Kyle gets mad. ATK +1 MAG +2.' },
+  foice: { name: 'Toy Scythe', type: 'weapon', who: ['kenny'], atk: 1, mag: 1, sell: 5, desc: 'From a costume store. Fitting. ATK +1 MAG +1.' },
+  luvas: { name: 'Wool Mittens', type: 'armor', def: 1, sell: 5, desc: 'Warm and fuzzy. DEF +1.' },
+  cachecol: { name: 'Striped Scarf', type: 'armor', def: 2, sell: 30, desc: "Knitted by Stan's grandpa. He'd rather be dead. DEF +2." },
+  gorro: { name: 'Spare Beanie', type: 'armor', def: 1, mag: 1, sell: 20, desc: 'Always good to have one. DEF +1 MAG +1.' },
 };
 
 const SPELLS = {
-  furia: { name: 'Fúria Verde', tp: 50, target: 'enemy', desc: 'Dano mágico enorme num inimigo.' },
-  licao: { name: 'Lição Moral', tp: 32, target: 'none', desc: '+20% MERCY em todos os inimigos.' },
-  cura: { name: 'Cura do Além', tp: 32, target: 'ally', desc: 'Cura bastante um aliado.' },
-  pacificar: { name: 'Pacificar', tp: 16, target: 'enemy', desc: 'Poupa um inimigo CANSADO (azul).' },
+  furia: { name: 'Jersey Rage', tp: 50, target: 'enemy', desc: 'Kyle goes full Jersey. Huge magic damage.' },
+  licao: { name: 'Moral Speech', tp: 32, target: 'none', desc: '"I learned something today." +20% MERCY to all.' },
+  cura: { name: 'Hell Prayer', tp: 32, target: 'ally', desc: 'Kenny prays to a friend from Hell. Heals a lot.' },
+  pacificar: { name: 'Pacify', tp: 16, target: 'enemy', desc: 'Spares a TIRED (blue) enemy.' },
 };
 
 const MEMBERS = {
   stan: { name: 'STAN', color: '#5ab4ff', dark: '#1e3c6a', hp: 90, atk: 10, def: 2, mag: 0, spells: [], weapon: 'espada', armor: ['luvas', null],
-    title: 'Cavaleiro de Gorro', desc: 'O líder. Vomita quando fica nervoso.' },
+    title: 'Beanie Knight', desc: 'The leader. Throws up when he gets nervous.' },
   kyle: { name: 'KYLE', color: '#5cdd5c', dark: '#1e5a24', hp: 110, atk: 12, def: 1, mag: 3, spells: ['furia', 'licao'], weapon: 'cajado', armor: [null, null],
-    title: 'Mago de Chapéu Verde', desc: 'Esquentado. Adora um discurso moral.' },
+    title: 'Green Hat Mage', desc: 'Hot-headed. Loves a good moral speech.' },
   kenny: { name: 'KENNY', color: '#ffa232', dark: '#6a3a0a', hp: 70, atk: 7, def: 1, mag: 7, spells: ['cura', 'pacificar'], weapon: 'foice', armor: [null, null],
-    title: 'Imortal Encapuzado', desc: 'Morre toda hora. Sempre volta.' },
+    title: 'Hooded Immortal', desc: 'Dies all the time. Always comes back.' },
 };
 
 /* Estado do jogo (salvo em localStorage) */
@@ -2759,8 +2759,10 @@ const Dlg = {
     if (this.choosing) {
       const opts = this.entry.choice, n = opts.length;
       const grid = n === 2 || n === 4;
-      const step = grid ? 16 : 14;
-      const baseY = y + 8 + this.lines.length * 16 + (grid ? 4 : 0);
+      // com duas linhas de pergunta, a grade 2x2 sobe um pouco para caber na caixa
+      const tight = grid && n === 4 && this.lines.length > 1;
+      const step = grid && !tight ? 16 : 14;
+      const baseY = y + 8 + this.lines.length * 16 + (grid && !tight ? 4 : 0);
       opts.forEach((o, i) => {
         let ox, oy;
         if (grid) { ox = tx + 18 + (i % 2) * 120; oy = baseY + Math.floor(i / 2) * step; }
@@ -2859,9 +2861,9 @@ const SaveMenu = {
     Font.draw(g, fmtTime(info.time || 0), x + w - 16, y + 10, col, { align: 'right' });
     Font.draw(g, (info.saveRoomName || '').slice(0, 26), x + 16, y + 30, col);
     if (this.saved) {
-      Font.draw(g, 'Arquivo salvo.', x + 16, y + 62, '#ffff00');
+      Font.draw(g, 'File saved.', x + 16, y + 62, '#ffff00');
     } else {
-      ['Salvar', 'Voltar'].forEach((t, i) => {
+      ['Save', 'Return'].forEach((t, i) => {
         const ox = x + 40 + i * 100;
         Font.draw(g, t, ox, y + 62, i === this.idx ? '#ffff00' : '#fff');
         if (i === this.idx) UI.heart(g, ox - 13, y + 67);
@@ -2874,7 +2876,7 @@ const SaveMenu = {
 const GEAR_ICON = () => fromRows(['....##....', '.#.####.#.', '.########.', '..##..##..', '###....###', '###....###', '..##..##..', '.########.', '.#.####.#.', '....##....'], { '#': '#ffffff' });
 const FieldMenu = {
   active: false, sel: 0, mode: 'top', idx: 0, who: 0, slot: 0, list: [], msg: null, conf: 0,
-  labels: ['ITEM', 'EQUIP', 'PODER', 'CONFIG'],
+  labels: ['ITEM', 'EQUIP', 'POWER', 'CONFIG'],
   open() { this.active = true; this.sel = 0; this.mode = 'top'; this.msg = null; Sfx.play('select'); },
   close() { this.active = false; Sfx.play('cancel'); },
   icons() {
@@ -2911,10 +2913,10 @@ const FieldMenu = {
           const it = ITEMS[G.items[this.idx]];
           if (this.slot === 1) { // jogar fora
             removeItemAt(this.idx); Sfx.play('select');
-            this.msg = { t: 0, text: `* Você jogou fora ${it.name}.` };
+            this.msg = { t: 0, text: `* You threw away the ${it.name}.` };
             this.mode = G.items.length ? 'items' : 'top'; this.idx = Math.min(this.idx, G.items.length - 1);
           } else if (it.type !== 'heal') {
-            Sfx.play('error'); this.msg = { t: 0, text: '* Isso é um equipamento. Use o menu EQUIP.' };
+            Sfx.play('error'); this.msg = { t: 0, text: "* That's equipment. Use the EQUIP menu." };
           } else if (it.all || G.party.length === 1) {
             this.useItem(this.idx, it.all ? null : G.party[0]);
           } else { this.mode = 'itemWho'; this.who = 0; }
@@ -2943,7 +2945,7 @@ const FieldMenu = {
           this.list = [];
           G.items.forEach((it, i) => { const d = ITEMS[it]; if (d.type === want && (!d.who || d.who.includes(id))) this.list.push(i); });
           if (want === 'armor') this.list.push(-1);
-          if (!this.list.length) { Sfx.play('error'); this.msg = { t: 0, text: '* Você não tem nada para equipar aí.' }; }
+          if (!this.list.length) { Sfx.play('error'); this.msg = { t: 0, text: '* You have nothing to equip there.' }; }
           else { Sfx.play('select'); this.mode = 'equipItem'; this.idx = 0; }
         }
         break;
@@ -3000,10 +3002,11 @@ const FieldMenu = {
   useItem(idx, who) {
     const it = ITEMS[G.items[idx]];
     let text;
-    if (it.all) { for (const id of G.party) healMember(id, it.heal); text = `* O grupo usou ${it.name}. HP recuperado!`; }
+    if (it.all) { for (const id of G.party) healMember(id, it.heal); text = `* The party shared the ${it.name}. HP recovered!`; }
     else {
       const got = healMember(who, it.heal);
-      text = got >= maxHp(who) - 0 && G.hp[who] === maxHp(who) && got > 0 ? `* ${MEMBERS[who].name} usou ${it.name}. HP no máximo!` : `* ${MEMBERS[who].name} usou ${it.name}. +${got} HP.`;
+      const nm = MEMBERS[who].name[0] + MEMBERS[who].name.slice(1).toLowerCase();
+      text = G.hp[who] === maxHp(who) ? `* ${nm} used the ${it.name}. HP maxed out!` : `* ${nm} used the ${it.name}. +${got} HP.`;
     }
     removeItemAt(idx);
     Sfx.play('heal');
@@ -3043,25 +3046,25 @@ const FieldMenu = {
         if (i === this.idx && this.mode === 'items') UI.heart(g, cx - 13, cy + 5);
       });
       const it = ITEMS[G.items[this.idx]];
-      if (it) { g.fillStyle = '#fff'; g.fillRect(px + 8, py + ph - 42, pw - 16, 1); Font.block(g, it.desc, px + 12, py + ph - 38, 34, { color: '#c0c0c0' }); }
+      if (it) { g.fillStyle = '#fff'; g.fillRect(px + 8, py + ph - 42, pw - 16, 1); Font.block(g, it.desc, px + 12, py + ph - 38, 33, { color: '#c0c0c0' }); }
       if (this.mode === 'itemAct' || this.mode === 'itemWho') {
         UI.box(g, px + 60, py + 50, 150, 40, style);
-        ['USAR', 'JOGAR FORA'].forEach((t, i) => {
-          const ox = px + 82 + i * 56;
+        ['USE', 'TOSS'].forEach((t, i) => {
+          const ox = px + 90 + i * 56;
           Font.draw(g, t, ox, py + 62, i === this.slot ? '#ffff00' : '#fff');
           if (i === this.slot && this.mode === 'itemAct') UI.heart(g, ox - 12, py + 67);
         });
-        if (this.mode === 'itemWho') Font.draw(g, 'Em quem?', px + 72, py + 74, '#9a9a9a');
+        if (this.mode === 'itemWho') Font.draw(g, 'On who?', px + 72, py + 74, '#9a9a9a');
       }
     } else if (['equipWho', 'equipSlot', 'equipItem'].includes(this.mode)) {
       UI.box(g, px, py, pw, ph, style);
       const id = G.party[this.who], e = G.equip[id];
       Font.draw(g, `${MEMBERS[id].name}  ${MEMBERS[id].title}`, px + 12, py + 6, MEMBERS[id].color);
-      const slots = [['ARMA', e.weapon], ['ARMADURA', e.armor[0]], ['ARMADURA', e.armor[1]]];
+      const slots = [['WEAPON', e.weapon], ['ARMOR', e.armor[0]], ['ARMOR', e.armor[1]]];
       slots.forEach(([lbl, it], i) => {
         const cy = py + 30 + i * 18;
         Mini.draw(g, lbl, px + 24, cy + 6, '#9a9a9a');
-        Font.draw(g, it ? ITEMS[it].name : '(nada)', px + 86, cy, this.mode === 'equipSlot' && this.slot === i ? '#ffff00' : '#fff');
+        Font.draw(g, it ? ITEMS[it].name : '(none)', px + 86, cy, this.mode === 'equipSlot' && this.slot === i ? '#ffff00' : '#fff');
         if (this.mode === 'equipSlot' && this.slot === i) UI.heart(g, px + 10, cy + 5);
       });
       const sy = py + 92;
@@ -3069,13 +3072,13 @@ const FieldMenu = {
       if (this.mode === 'equipItem') {
         UI.box(g, px + 120, py + 26, 150, 18 + this.list.length * 16, style);
         this.list.forEach((invIdx, i) => {
-          const t = invIdx >= 0 ? ITEMS[G.items[invIdx]].name : '(tirar)';
+          const t = invIdx >= 0 ? ITEMS[G.items[invIdx]].name : '(remove)';
           Font.draw(g, t, px + 140, py + 32 + i * 16, i === this.idx ? '#ffff00' : '#fff');
           if (i === this.idx) UI.heart(g, px + 128, py + 37 + i * 16);
         });
         const invIdx = this.list[this.idx];
-        if (invIdx >= 0) Font.block(g, ITEMS[G.items[invIdx]].desc, px + 12, py + 112, 34, { color: '#c0c0c0' });
-      } else if (this.mode === 'equipWho') Font.draw(g, '< escolha quem >', px + pw / 2, py + 124, '#9a9a9a', { align: 'center' });
+        if (invIdx >= 0) Font.block(g, ITEMS[G.items[invIdx]].desc, px + 12, py + 112, 33, { color: '#c0c0c0' });
+      } else if (this.mode === 'equipWho') Font.draw(g, '< choose who >', px + pw / 2, py + 124, '#9a9a9a', { align: 'center' });
     } else if (this.mode === 'powerWho' || this.mode === 'power') {
       UI.box(g, px, py, pw, ph, style);
       const id = G.party[this.who], m = MEMBERS[id];
@@ -3084,23 +3087,23 @@ const FieldMenu = {
       Font.draw(g, m.title, px + 62, py + 24, '#fff');
       Font.draw(g, `LV 1   HP ${G.hp[id]}/${maxHp(id)}`, px + 62, py + 40, '#fff');
       Font.draw(g, `ATK ${stat(id, 'atk')}  DEF ${stat(id, 'def')}  MAG ${stat(id, 'mag')}`, px + 12, py + 62, '#fff');
-      Font.block(g, m.desc, px + 12, py + 80, 34, { color: '#c0c0c0' });
+      Font.block(g, m.desc, px + 12, py + 80, 33, { color: '#c0c0c0' });
       if (m.spells.length) {
         m.spells.forEach((s, i) => {
           const sp = SPELLS[s];
           Font.draw(g, sp.name, px + 12, py + 116 + i * 16, '#fff');
           Font.draw(g, `${sp.tp}% TP`, px + pw - 12, py + 116 + i * 16, '#ff9a1f', { align: 'right' });
         });
-      } else Font.draw(g, 'Usa AGIR: conversa e age.', px + 12, py + 116, '#fff');
+      } else Font.draw(g, 'Uses ACT: talks and does stuff.', px + 12, py + 116, '#fff');
     } else if (this.mode === 'config' || this.mode === 'quit') {
       UI.box(g, px, py, pw, ph, style);
-      const touchLbl = ['Automático', 'Sempre', 'Nunca'][Game.conf.touch];
+      const touchLbl = ['Auto', 'Always', 'Never'][Game.conf.touch];
       const rows = [
-        ['Volume geral', `${Math.round(Sfx.vol.master * 100)}%`],
-        ['Música', `${Math.round(Sfx.vol.music * 100)}%`],
-        ['Controles na tela', touchLbl],
-        ['Tela cheia', ''],
-        ['Voltar ao título', ''],
+        ['Master Volume', `${Math.round(Sfx.vol.master * 100)}%`],
+        ['Music', `${Math.round(Sfx.vol.music * 100)}%`],
+        ['Touch Controls', touchLbl],
+        ['Fullscreen', ''],
+        ['Return to Title', ''],
       ];
       rows.forEach(([a, b], i) => {
         const cy = py + 12 + i * 20;
@@ -3110,8 +3113,8 @@ const FieldMenu = {
       });
       if (this.mode === 'quit') {
         UI.box(g, px + 30, py + 60, pw - 60, 56, style);
-        Font.draw(g, 'Voltar ao título?', px + pw / 2, py + 68, '#fff', { align: 'center' });
-        ['Sim', 'Não'].forEach((t, i) => {
+        Font.draw(g, 'Return to title?', px + pw / 2, py + 68, '#fff', { align: 'center' });
+        ['Yes', 'No'].forEach((t, i) => {
           const ox = px + 90 + i * 70;
           Font.draw(g, t, ox, py + 90, i === this.conf ? '#ffff00' : '#fff');
           if (i === this.conf) UI.heart(g, ox - 13, py + 95);
@@ -3272,19 +3275,19 @@ const World = {
         a = new Actor(Object.assign({ kind: 'save', bw: 12, bh: 8, area: { x: -12, y: -18, w: 24, h: 22 } }, o));
         a.interact = async () => {
           healAll();
-          await Dlg.say(o.text || ['* (Uma luz estranha brilha aqui.)', '* (Isso te enche de DETERMINAÇÃO.)']);
+          await Dlg.say(o.text || ['* (A strange light shines here.)', '* (It fills you with DETERMINATION.)']);
           await SaveMenu.open(this.def.name || '');
         };
         break;
       case 'chest':
         a = new Actor(Object.assign({ kind: 'chest', bw: 18, bh: 8, flag: 'chest_' + o.id }, o));
         a.interact = async () => {
-          if (hasFlag(a.flag)) { await Dlg.say('* (O baú está vazio.)'); return; }
-          if (G.items.length >= 12) { await Dlg.say('* (Seus bolsos estão cheios.)'); return; }
+          if (hasFlag(a.flag)) { await Dlg.say('* (The chest is empty.)'); return; }
+          if (G.items.length >= 12) { await Dlg.say('* (Your pockets are full.)'); return; }
           setFlag(a.flag); Sfx.play('item');
-          if (o.money) { G.money += o.money; await Dlg.say(`* (Dentro do baú havia ${o.money} D$.)`); return; }
+          if (o.money) { G.money += o.money; await Dlg.say(`* (Inside the chest was ${o.money} D$.)`); return; }
           addItem(o.item);
-          await Dlg.say(`* (Você abriu o baú.)\n* (Dentro havia: {y}${ITEMS[o.item].name}{w}.)`);
+          await Dlg.say(`* (You opened the chest.)\n* (Inside was: {y}${ITEMS[o.item].name}{w}.)`);
         };
         break;
       case 'sign':
@@ -3608,7 +3611,7 @@ const Cut = {
   async join(who) {
     if (!G.party.includes(who)) G.party.push(who);
     G.hp[who] = maxHp(who);
-    await Banner.show(`${MEMBERS[who].name} ENTROU PARA O GRUPO!`, MEMBERS[who].color);
+    await Banner.show(`${MEMBERS[who].name} JOINED THE PARTY!`, MEMBERS[who].color);
   },
 };
 
@@ -3620,7 +3623,7 @@ const Cut = {
 
 const PANEL_Y = 168;
 const BOX_CX = 160, BOX_CY = 98;
-const BTN_LABEL = { fight: 'LUTAR', act: 'AGIR', magic: 'MAGIA', item: 'ITEM', spare: 'POUPAR', defend: 'DEFENDER' };
+const BTN_LABEL = { fight: 'FIGHT', act: 'ACT', magic: 'MAGIC', item: 'ITEM', spare: 'SPARE', defend: 'DEFEND' };
 const PARTY_POS = { 1: [[60, 122]], 2: [[66, 100], [50, 138]], 3: [[70, 86], [52, 118], [70, 150]] };
 const ENEMY_POS = { 1: [[240, 128]], 2: [[226, 98], [268, 146]], 3: [[218, 84], [270, 118], [226, 152]] };
 const ATTACK_COLORS = { stan: '#5ab4ff', kyle: '#5cdd5c', kenny: '#ffa232' };
@@ -3676,7 +3679,7 @@ const Battle = {
     for (const m of this.party) tween(m, { off: 0 }, 14, Ease.out);
     for (const e of this.enemies) tween(e, { off: 0 }, 14, Ease.out);
     await wait(14);
-    this.setText(this.cfg.intro || this.enemies[0].def.intro || `* ${this.enemies[0].name} bloqueia o caminho!`);
+    this.setText(this.cfg.intro || this.enemies[0].def.intro || `* ${this.enemies[0].name} blocks the way!`);
     if (this.cfg.onStart) await this.cfg.onStart(this);
     for (;;) {
       this.turn++;
@@ -3757,13 +3760,13 @@ const Battle = {
     const al = this.alive();
     if (this.cfg.flavor) { const f = this.cfg.flavor(this); if (f) return f; }
     const spare = al.find((e) => e.mercy >= 100);
-    if (spare && Math.random() < 0.6) return `* ${spare.name} não quer mais lutar.`;
+    if (spare && Math.random() < 0.6) return `* ${spare.name} doesn't want to fight anymore.`;
     const tired = al.find((e) => e.tired);
-    if (tired && Math.random() < 0.5) return `* ${tired.name} parece cansado.`;
+    if (tired && Math.random() < 0.5) return `* ${tired.name} looks {b}TIRED{w}.`;
     const e = U.pick(al);
     if (!e) return '* ...';
     const fl = e.def.flavor;
-    return typeof fl === 'function' ? fl(this, e) : U.pick(fl || [`* ${e.name} está aqui.`]);
+    return typeof fl === 'function' ? fl(this, e) : U.pick(fl || [`* ${e.name} is here.`]);
   },
   nextChooser(from) { for (let i = from + 1; i < this.party.length; i++) if (G.hp[this.party[i].id] > 0 && this.busyBy[i] === null) return i; return -1; },
   prevChooser(from) { for (let i = from - 1; i >= 0; i--) if (G.hp[this.party[i].id] > 0 && this.busyBy[i] === null) return i; return -1; },
@@ -3887,7 +3890,7 @@ const Battle = {
   },
   firstEnemyIdx() { const a = this.alive()[0]; return a ? this.enemies.indexOf(a) : 0; },
   actsFor(e) {
-    const list = [{ name: 'Checar', check: true, ok: true }];
+    const list = [{ name: 'Check', check: true, ok: true }];
     for (const a of e.def.acts || []) {
       if (a.cond && !a.cond(this, e)) continue;
       const ok = (a.req || []).every((id) => {
@@ -3923,10 +3926,10 @@ const Battle = {
       case 'spare': {
         const e = this.retarget(a.target); if (!e) return;
         this.pose(m, 'act', 20);
-        if (e.mercy >= 100 && (!e.def.canSpare || e.def.canSpare(this, e))) { await this.spareEnemy(e, `* ${cap} poupou ${e.name}!`); }
+        if (e.mercy >= 100 && (!e.def.canSpare || e.def.canSpare(this, e))) { await this.spareEnemy(e, `* ${cap} spared ${e.name}!`); }
         else {
           if (e.def.onSpareFail) await e.def.onSpareFail(this, e, m);
-          else await this.say(`* ${cap} poupou ${e.name}.\n* Mas o nome não estava {y}AMARELO{w}...`);
+          else await this.say(`* ${cap} spared ${e.name}.\n* But its name wasn't {y}YELLOW{w}...`);
         }
         return;
       }
@@ -3945,13 +3948,13 @@ const Battle = {
         this.pose(m, 'item', 24);
         if (it.all) {
           for (const pm of this.party) this.healMember(pm, it.heal);
-          await this.say(`* ${cap} usou ${it.name}!\n* O grupo recuperou ${it.heal} HP!`);
+          await this.say(`* ${cap} shared the ${it.name}!\n* Everyone recovered ${it.heal} HP!`);
         } else {
           const t = a.ally;
           if (it.revive && G.hp[t.id] <= 0) { G.hp[t.id] = 0; this.healMember(t, Math.round(maxHp(t.id) * it.revive)); }
           else this.healMember(t, it.heal);
-          const who = t === m ? '' : ` em ${MEMBERS[t.id].name[0] + MEMBERS[t.id].name.slice(1).toLowerCase()}`;
-          await this.say(`* ${cap} usou ${it.name}${who}!`);
+          const who = t === m ? '' : ` on ${MEMBERS[t.id].name[0] + MEMBERS[t.id].name.slice(1).toLowerCase()}`;
+          await this.say(`* ${cap} used the ${it.name}${who}!`);
         }
         return;
       }
@@ -3976,7 +3979,7 @@ const Battle = {
     switch (a.spell) {
       case 'furia': {
         const e = this.retarget(a.target); if (!e) break;
-        await this.say(`* Kyle gritou com toda a raiva e lançou a {g}FÚRIA VERDE{w}!`, { auto: 22 });
+        await this.say(`* Kyle went full Jersey!\n* {g}JERSEY RAGE{w}!`, { auto: 22 });
         Sfx.play('magic');
         this.fx.push({ type: 'beam', x0: m.x + 16, y0: m.y - 22, x1: e.x, y1: e.y - 24, t: 0, color: '#5cff6a' });
         await wait(14);
@@ -3986,14 +3989,14 @@ const Battle = {
         break;
       }
       case 'licao': {
-        await this.say('* Kyle subiu num caixote e fez um longo discurso sobre amizade e tolerância...', {});
+        await this.say('* Kyle stood on a crate.\n* "You know, I learned something today..."', {});
         for (const e of this.alive()) this.addMercy(e, 20);
-        await this.say('* Todos ficaram meio pensativos.');
+        await this.say('* Everyone feels a little thoughtful.');
         break;
       }
       case 'cura': {
         const t = a.ally;
-        await this.say(`* Kenny fez uma oração do além.\n* Mmmph mmph...`, { auto: 26 });
+        await this.say(`* Kenny prayed to a friend he made in Hell.\n* Mmmph mmph...`, { auto: 26 });
         this.healMember(t, stat('kenny', 'mag') * 6 + 24);
         await wait(16);
         break;
@@ -4001,10 +4004,10 @@ const Battle = {
       case 'pacificar': {
         const e = this.retarget(a.target); if (!e) break;
         if (e.tired && (!e.def.canSpare || e.def.canSpare(this, e))) {
-          await this.say(`* Kenny cantou uma canção de ninar abafada...`, { auto: 24 });
-          await this.spareEnemy(e, `* ${e.name} caiu no sono!`);
+          await this.say(`* Kenny sang a muffled lullaby...`, { auto: 24 });
+          await this.spareEnemy(e, `* ${e.name} fell asleep!`);
         } else {
-          await this.say(`* Kenny tentou acalmar ${e.name}...\n* Mas o inimigo não estava {b}CANSADO{w}.`);
+          await this.say(`* Kenny tried to calm ${e.name} down...\n* But it wasn't {b}TIRED{w}.`);
         }
         break;
       }
@@ -4019,7 +4022,7 @@ const Battle = {
     if (e.mercy !== before) this.popup(e.x, e.y - 44, `+${e.mercy - before}%`, '#ffff00', { mini: true });
     if (e.mercy >= 100 && before < 100) Sfx.play('spare');
   },
-  tire(e) { if (!e.gone && !e.tired) { e.tired = true; this.popup(e.x, e.y - 62, 'CANSADO', '#5ad2ff', { mini: true }); } },
+  tire(e) { if (!e.gone && !e.tired) { e.tired = true; this.popup(e.x, e.y - 62, 'TIRED', '#5ad2ff', { mini: true }); } },
 
   /* ---------- minigame de ataque ---------- */
   async runQTE(fighters) {
@@ -4055,7 +4058,7 @@ const Battle = {
     const a = this.acts[r.pi];
     const e = this.retarget(a.target);
     if (!e) return;
-    if (mult <= 0) { this.popup(e.x, e.y - 30, 'ERROU', '#9a9a9a'); Sfx.play('miss'); return; }
+    if (mult <= 0) { this.popup(e.x, e.y - 30, 'MISS', '#9a9a9a'); Sfx.play('miss'); return; }
     (async () => {
       this.pose(m, 'attack'); m.animF = 0;
       Sfx.play('swing');
@@ -4238,7 +4241,7 @@ const Battle = {
     G.hp[m.id] = Math.min(G.hp[m.id], -Math.round(maxHp(m.id) * 0.25));
     this.pose(m, 'down');
     Sfx.play('down');
-    this.popup(m.x + 6, m.y - 46, 'CAÍDO', '#ff4040', { mini: true });
+    this.popup(m.x + 6, m.y - 46, 'DOWN', '#ff4040', { mini: true });
     if (m.id === 'kenny') { this.kennyDied = true; Sfx.play('splat'); }
   },
   async endTurn() {
@@ -4246,21 +4249,21 @@ const Battle = {
       this.kennyDied = false;
       const stan = this.member('stan'), kyle = this.member('kyle');
       const bubbles = [];
-      if (stan && G.hp.stan > 0) bubbles.push(this.makeBubble(stan.x + 18, stan.y - 40, 'MEU DEUS! ELES MATARAM O KENNY!', 'right', 'stan'));
-      if (kyle && G.hp.kyle > 0) bubbles.push(this.makeBubble(kyle.x + 18, kyle.y - 26, 'SEUS DESGRAÇADOS!', 'right', 'kyle'));
+      if (stan && G.hp.stan > 0) bubbles.push(this.makeBubble(stan.x + 18, stan.y - 40, 'OH MY GOD! THEY KILLED KENNY!', 'right', 'stan'));
+      if (kyle && G.hp.kyle > 0) bubbles.push(this.makeBubble(kyle.x + 18, kyle.y - 26, 'YOU BASTARDS!', 'right', 'kyle'));
       if (bubbles.length) await this.showBubbles(bubbles, { auto: 80 });
       const k = this.member('kenny');
       if (k && G.hp.kenny <= 0) {
         G.hp.kenny = Math.round(maxHp('kenny') * 0.5);
         this.pose(k, 'idle'); Sfx.play('revive');
         this.fx.push({ type: 'heal', x: k.x, y: k.y - 18, t: 0 });
-        await this.say('* Kenny voltou à vida.\n* Ninguém sabe explicar como.', { auto: 60 });
+        await this.say('* Kenny came back to life.\n* Nobody knows how. Nobody asks.', { auto: 60 });
       }
     }
     for (const m of this.party) {
       if (G.hp[m.id] <= 0) {
         G.hp[m.id] += Math.ceil(maxHp(m.id) / 8);
-        if (G.hp[m.id] > 0) { this.pose(m, 'idle'); this.popup(m.x + 6, m.y - 40, 'DE PÉ', '#3cff4c', { mini: true }); Sfx.play('revive'); }
+        if (G.hp[m.id] > 0) { this.pose(m, 'idle'); this.popup(m.x + 6, m.y - 40, 'UP', '#3cff4c', { mini: true }); Sfx.play('revive'); }
       } else if (m.pose !== 'idle') this.pose(m, 'idle');
       m.defending = false;
     }
@@ -4282,7 +4285,7 @@ const Battle = {
       Music.stop(4);
       Sfx.play('victory');
       for (const m of this.party) if (G.hp[m.id] > 0) this.pose(m, 'victory');
-      if (!this.cfg.noVictoryText) await this.say(`* VOCÊ VENCEU!\n* Ganhou 0 XP e ${money} D$.`);
+      if (!this.cfg.noVictoryText) await this.say(`* YOU WON!\n* Got 0 EXP and ${money} D$.`);
     }
     if (this.cfg.onEnd) await this.cfg.onEnd(this, result);
     return result;
@@ -4457,7 +4460,7 @@ const Battle = {
           const icon = { fight: 'fight', act: 'act', spell: 'magic', item: 'item', spare: 'spare', defend: 'defend' }[a.type];
           if (icon) g.drawImage(silhouetteCached(ICON.btn[icon], '#ffff00'), bx + bw - 15, PANEL_Y - 12);
         }
-        if (this.choosing && this.busyBy && this.busyBy[i] !== null) Mini.draw(g, 'AJUDANDO', bx + bw - 4, PANEL_Y - 8, '#ffff00', { align: 'right' });
+        if (this.choosing && this.busyBy && this.busyBy[i] !== null) Mini.draw(g, 'HELPING', bx + bw - 4, PANEL_Y - 8, '#ffff00', { align: 'right' });
       }
     });
     const ty = 189;
@@ -4487,7 +4490,7 @@ const Battle = {
     const m = this.party[this.cur];
     const heart = (x, y) => UI.heart(g, x, y + 5);
     if (this.ms === 'enemy') {
-      Mini.draw(g, 'HP', 220, ty + 1, '#9a9aa8', { align: 'center' }); Mini.draw(g, 'PIEDADE', 274, ty + 1, '#9a9aa8', { align: 'center' });
+      Mini.draw(g, 'HP', 220, ty + 1, '#9a9aa8', { align: 'center' }); Mini.draw(g, 'MERCY', 274, ty + 1, '#9a9aa8', { align: 'center' });
       this.alive().forEach((e, i) => {
         const y = ty + 5 + i * 15;
         const col = e.mercy >= 100 ? '#ffff00' : e.tired ? '#5ad2ff' : '#fff';
@@ -4547,7 +4550,7 @@ const Battle = {
         const c = r.flash > 0 ? (r.res === 'perfect' ? '#ffff00' : '#ffffff') : ATTACK_COLORS[m.id];
         g.fillStyle = c; g.fillRect(Math.round(r.x), y + 1, 4, 13);
       }
-      if (r.done && r.res === 'perfect' && r.flash > 0) Mini.draw(g, 'PERFEITO!', TX + 14, y + 5, '#ffff00');
+      if (r.done && r.res === 'perfect' && r.flash > 0) Mini.draw(g, 'PERFECT!', TX + 14, y + 5, '#ffff00');
     });
   },
   drawBubble(g, b) {
@@ -4742,7 +4745,7 @@ const PATTERNS = {
       if (ph === 1 && every(c, 12)) B.spawn({ img: bspr('claw'), x: U.rnd(ib.x + 6, ib.x2 - 6), y: ib.y - 8, vy: 3.2, r: 6, dmg: c.e.atk, clip: true });
       if (ph === 2 && every(c, 10)) B.spawn({ img: bspr('mud'), x: U.rnd(ib.x + 6, ib.x2 - 6), y: ib.y2 + 6, vy: -3, r: 3.5, dmg: c.e.atk, clip: true });
     },
-    drawOver(g, B, c) { const lbl = ['HOMEM', 'URSO', 'PORCO'][Math.min(2, Math.floor(c.t / 70))]; const ib = B.inner(); Mini.draw(g, lbl, ib.cx, ib.y - 9, '#ff5050', { align: 'center' }); },
+    drawOver(g, B, c) { const lbl = ['MAN', 'BEAR', 'PIG'][Math.min(2, Math.floor(c.t / 70))]; const ib = B.inner(); Mini.draw(g, lbl, ib.cx, ib.y - 9, '#ff5050', { align: 'center' }); },
   },
   /* --- Goomba --- */
   goomba_march: {
@@ -4806,7 +4809,7 @@ const PATTERNS = {
       const ib = B.inner();
       if (every(c, 34) && c.t < 170) {
         let row = U.irnd(0, 2); if (row === c.d.last) row = (row + 1) % 3; c.d.last = row;
-        const word = U.pick(['AUTORIDADE', 'RESPEITEM', 'OBEDEÇAM']);
+        const word = U.pick(['AUTHORITAH', 'RESPECT', 'OBEY ME']);
         const y = ib.y + 14 + row * 26, left = Math.random() < 0.5;
         const sp = 2.6 * (left ? 1 : -1);
         for (let i = 0; i < word.length; i++) {
@@ -4863,7 +4866,7 @@ const PATTERNS = {
   screw_you: {
     w: 96, h: 80, dur: 200, update(B, c) {
       const ib = B.inner();
-      const phrase = 'DANEM-SE VOCÊS! VOU PRA CASA!';
+      const phrase = "SCREW YOU GUYS! I'M GOING HOME!";
       if (every(c, 6)) {
         c.d.i = ((c.d.i || 0) + 1) % phrase.length;
         const ch = phrase[c.d.i];
@@ -4927,108 +4930,109 @@ async function memberSays(B, id, text, auto) {
 /* ---------- Inimigos ---------- */
 const ENEMIES = {
   srchapeu: {
-    name: 'Sr. Chapéu', hp: 70, atk: 5, def: 0, money: 0, voice: 'hat', tiredAt: 0.4,
-    check: '* SR. CHAPÉU - ATK 5 DEF 0\n* Um boneco de treino. Já foi de um professor.',
-    intro: '* O Sr. Chapéu bloqueia o caminho!\n* (É só um boneco de treino.)',
-    flavor: ['* O Sr. Chapéu encara o vazio.', '* O Sr. Chapéu ajeita a cartola.', '* Cheiro de serragem.'],
-    acts: [{ name: 'Conversar', fn: async (B, e) => { await B.say('* Você puxou papo com o Sr. Chapéu.\n* Ele parece gostar de você.'); B.addMercy(e, 50); } }],
-    talk: (B, e) => U.pick(['...', 'Mm-hmm.', 'Que coisa, hein?', '(silêncio de boneco)']),
+    name: 'Mr. Hat', hp: 70, atk: 5, def: 0, money: 0, voice: 'hat', tiredAt: 0.4,
+    check: "* MR. HAT - ATK 5 DEF 0\n* Mr. Garrison's old puppet. Has strong opinions.",
+    intro: "* Mr. Hat blocks the way!\n* (It's just a training dummy.)",
+    flavor: ['* Mr. Hat stares into the void.', '* Mr. Hat adjusts his top hat.', '* Smells like sawdust and teacher lounge.'],
+    acts: [{ name: 'Talk', fn: async (B, e) => { await B.say('* You made small talk with Mr. Hat.\n* He seems to like you more than Mr. Garrison.'); B.addMercy(e, 50); } }],
+    talk: (B, e) => U.pick(['...', 'Mm-hmm.', "That's what I said!", '(puppet silence)']),
     patterns: ['hat_rain', 'hat_line'],
   },
   cheesinho: {
-    name: 'Cheesinho', hp: 140, atk: 9, def: 0, money: 18, voice: 'monster',
-    check: '* CHEESINHO - ATK 9 DEF 0\n* Um salgadinho de queijo bravo. Odeia ser mastigado.',
-    intro: '* Cheesinho rolou até você!',
-    flavor: ['* Cheesinho espalha farelos laranjas por todo lado.', '* Cheiro de queijo processado.', '* Cheesinho está crocante de raiva.'],
+    name: 'Poofling', hp: 140, atk: 9, def: 0, money: 18, voice: 'monster',
+    check: '* POOFLING - ATK 9 DEF 0\n* An angry Cheesy Poof. Hates being chewed.',
+    intro: '* A Poofling rolls up to you!',
+    flavor: ['* Poofling leaves orange dust everywhere.', '* Smells like processed cheese.', '* Poofling is crunchy with rage.'],
     art: (B, e, f) => Spr.enemy('cheesinho', f, e.tired ? 'tired' : e.mercy >= 100 ? 'happy' : 'angry'),
     acts: [
-      { name: 'Elogiar', fn: async (B, e) => { await B.say('* Você elogiou a crocância do Cheesinho.'); B.addMercy(e, 35); e.data.praised = true; } },
-      { name: 'Prometer', fn: async (B, e) => { await B.say('* Você prometeu nunca, jamais, comer o Cheesinho.\n* (Isso vai ser difícil.)'); B.addMercy(e, 30); } },
-      { name: 'Ler rótulo', req: ['kyle'], fn: async (B, e) => { await memberSays(B, 'kyle', 'Sódio: 900%. Corante: SIM. Queijo: ...não consta.'); await B.say('* Cheesinho ficou envergonhado com a própria tabela nutricional.'); B.addMercy(e, 65); B.tire(e); } },
+      { name: 'Compliment', fn: async (B, e) => { await B.say("* You told Poofling it has a great crunch."); B.addMercy(e, 35); e.data.praised = true; } },
+      { name: 'Promise', fn: async (B, e) => { await B.say('* You promised to never, ever eat Poofling.\n* (Cartman would never.)'); B.addMercy(e, 30); } },
+      { name: 'Read Label', req: ['kyle'], fn: async (B, e) => { await memberSays(B, 'kyle', 'Sodium: 900%. Cheese: ...not listed. Dude.'); await B.say('* Poofling is embarrassed by its own nutrition facts.'); B.addMercy(e, 65); B.tire(e); } },
     ],
-    talk: (B, e) => e.mercy >= 100 ? 'Tá bom... vocês são legais.' : e.data.praised ? 'Para com isso... (crunch)' : U.pick(['Crunch! Crunch!', 'Ninguém me mastiga!', 'Sou 100% queijo artificial!', 'Laranja é a cor da raiva!']),
+    talk: (B, e) => e.mercy >= 100 ? "Fine... you guys are cool." : e.data.praised ? 'Stop it... (crunch)' : U.pick(['Crunch! Crunch!', 'Nobody chews ME!', '100% artificial cheese!', "You're gonna... NOT eat me!"]),
     patterns: ['puff_rain', 'fork_stab', 'crumb_spray'],
   },
   peru: {
-    name: 'Peru Mutante', hp: 170, atk: 11, def: 1, money: 24, voice: 'goomba',
-    check: '* PERU MUTANTE - ATK 11 DEF 1\n* Fugiu de uma fazenda bem estranha. Odeia feriados.',
-    intro: '* Um Peru Mutante surgiu gritando!',
-    flavor: ['* O Peru Mutante gorgoleja de forma ameaçadora.', '* Penas voam por todo lado.', '* Um dos olhos do Peru Mutante te encara. O outro, não.'],
+    name: 'Mutant Turkey', hp: 170, atk: 11, def: 1, money: 24, voice: 'goomba',
+    check: '* MUTANT TURKEY - ATK 11 DEF 1\n* Genetically engineered. Still mad about Thanksgiving.',
+    intro: '* A Mutant Turkey attacks, gobbling!',
+    flavor: ['* The Mutant Turkey gobbles menacingly.', '* Feathers everywhere.', '* One eye stares at you. The other one does not.'],
     acts: [
-      { name: 'Imitar', fn: async (B, e) => { await B.say('* Você fez "GLU GLU GLU".\n* O Peru Mutante achou que você é da família.'); B.addMercy(e, 35); } },
-      { name: 'Agradecer', fn: async (B, e) => { await B.say('* Você desejou um feliz Dia de Ação de Graças.\n* O Peru Mutante ficou {r}MUITO{w} ofendido.'); e.atk += 2; e.data.offended = true; } },
-      { name: 'Dar milho', req: ['kenny'], fn: async (B, e) => { await B.say('* Kenny tirou um milho do bolso.\n* (Ninguém quer saber de onde.)'); B.addMercy(e, 60); } },
+      { name: 'Gobble', fn: async (B, e) => { await B.say('* You went "GOBBLE GOBBLE GOBBLE."\n* The Mutant Turkey thinks you are family.'); B.addMercy(e, 35); } },
+      { name: 'Thank', fn: async (B, e) => { await B.say('* You wished it a Happy Thanksgiving.\n* The Mutant Turkey is {r}VERY{w} offended.'); e.atk += 2; e.data.offended = true; } },
+      { name: 'Give Corn', req: ['kenny'], fn: async (B, e) => { await B.say('* Kenny pulled some corn out of his hood.\n* (Nobody wants to know where it came from.)'); B.addMercy(e, 60); } },
     ],
-    talk: (B, e) => e.data.offended ? (e.data.offended = false, 'EU NÃO VOU PRO FORNO!!') : e.mercy >= 100 ? 'glu... glu? (feliz)' : U.pick(['GLU GLU!', 'GLUGLUGLU?!', 'Penas pra todo lado!']),
+    talk: (B, e) => e.data.offended ? (e.data.offended = false, "I'M NOT GOING IN THE OVEN!!") : e.mercy >= 100 ? 'gobble... (happy)' : U.pick(['GOBBLE GOBBLE!', 'GOBBLEGOBBLE?!', 'Feathers for EVERYONE!']),
     patterns: ['feather_fan', 'turkey_charge', 'gobble_ring'],
   },
   clyde: {
-    name: 'Sapo Clyde', hp: 150, atk: 10, def: 0, money: 20, voice: 'butters',
-    check: '* SAPO CLYDE - ATK 10 DEF 0\n* Bicho de pelúcia do Cartman. Ganhou vida no Mundo Sombrio.',
-    intro: '* O Sapo Clyde quer tomar chá com você!',
-    flavor: ['* O Sapo Clyde serve chá invisível.', '* Cheiro de pelúcia guardada no armário.', '* O Sapo Clyde ajeita a gravata imaginária.'],
+    name: 'Clyde Frog', hp: 150, atk: 10, def: 0, money: 20, voice: 'butters',
+    check: "* CLYDE FROG - ATK 10 DEF 0\n* Cartman's stuffed frog. Came to life in the Dark World.",
+    intro: '* Clyde Frog invites you to a tea party!',
+    flavor: ['* Clyde Frog pours invisible tea.', '* Smells like a toy box.', '* Clyde Frog adjusts his imaginary bow tie.'],
     art: (B, e, f) => Spr.enemy('clyde', f, e.mercy >= 100 ? 'happy' : e.data.mad ? 'angry' : 'neutral'),
     acts: [
-      { name: 'Tomar chá', fn: async (B, e) => { await B.say('* Você aceitou uma xícara de chá imaginário.\n* Estava... imaginariamente bom.'); B.addMercy(e, 40); } },
-      { name: 'Conversar', fn: async (B, e) => { await B.say('* Você perguntou como é ser um bicho de pelúcia.'); B.addMercy(e, 25); e.data.talked = true; } },
-      { name: 'Elogiar chá', req: ['kyle'], fn: async (B, e) => { await memberSays(B, 'kyle', 'Hum! Que chá sofisticado, senhor Clyde.'); B.addMercy(e, 55); } },
+      { name: 'Drink Tea', fn: async (B, e) => { await B.say('* You accepted a cup of imaginary tea.\n* It was... imaginarily delicious.'); B.addMercy(e, 40); } },
+      { name: 'Chat', fn: async (B, e) => { await B.say('* You asked what it is like being a stuffed animal.'); B.addMercy(e, 25); e.data.talked = true; } },
+      { name: 'Praise Tea', req: ['kyle'], fn: async (B, e) => { await memberSays(B, 'kyle', 'Mmm! Very fancy tea, Mr. Clyde.'); B.addMercy(e, 55); } },
     ],
-    talk: (B, e) => e.data.talked ? (e.data.talked = false, 'O Cartman me deixava no armário...') : e.mercy >= 100 ? 'Que visita agradável!' : U.pick(['Ribbit... mais chá?', 'Chá das cinco!', 'Mindinho levantado, por favor.']),
+    talk: (B, e) => e.data.talked ? (e.data.talked = false, 'Cartman used to lock me in the closet...') : e.mercy >= 100 ? 'What lovely guests!' : U.pick(['Ribbit... more tea?', 'Polly Prissypants was NOT invited.', 'Pinkies up, please.']),
     patterns: ['frog_hop', 'tea_pour'],
   },
   mbp: {
     name: 'ManBearPig', hp: 720, atk: 14, def: 2, money: 80, voice: 'mbp', tiredAt: 0.25,
-    check: '* MANBEARPIG - ATK 14 DEF 2\n* Meio homem, meio urso, meio porco. Ninguém o leva a sério.',
-    intro: '* MANBEARPIG apareceu!\n* (Isso é sério. Super sério.)',
-    flavor: (B, e) => U.pick(['* ManBearPig rosna em três idiomas.', '* ManBearPig está meio bravo, meio faminto, meio confuso.', '* Cheiro de floresta, chiqueiro e colônia barata.']),
+    check: "* MANBEARPIG - ATK 14 DEF 2\n* Half man, half bear, half pig. Nobody takes it seriously.",
+    intro: "* MANBEARPIG appears!\n* (This is serious. Super cereal.)",
+    flavor: (B, e) => U.pick(['* ManBearPig growls in three languages.', '* ManBearPig is half angry, half hungry, half confused.', '* Smells like forest, pigpen and cheap cologne.']),
     art: (B, e, f) => Spr.enemy('mbp', f),
     acts: [
-      { name: 'Levar a sério', fn: async (B, e) => { await B.say('* Você olhou fundo nos olhos do ManBearPig e disse: "Eu levo você a sério."'); B.addMercy(e, 25); e.data.serious = true; } },
-      { name: 'Fazer conta', fn: async (B, e) => { await B.say('* Você tentou somar meio + meio + meio.\n* Deu um e meio. ManBearPig ficou confuso.'); B.addMercy(e, 15); B.tire(e); } },
-      { name: 'Super cereal', req: ['kyle'], fn: async (B, e) => { await memberSays(B, 'kyle', 'Pessoal... isso é SÉRIO. Super cereal!'); await B.say('* ManBearPig se sentiu respeitado pela primeira vez na vida.'); B.addMercy(e, 40); } },
-      { name: 'Fingir morte', req: ['kenny'], fn: async (B, e) => { await B.say('* Kenny se fingiu de morto.\n* Ele é muito, MUITO bom nisso.'); B.addMercy(e, 30); } },
+      { name: 'Take Seriously', fn: async (B, e) => { await B.say('* You looked ManBearPig in the eyes and said: "I take you seriously."'); B.addMercy(e, 25); e.data.serious = true; } },
+      { name: 'Do the Math', fn: async (B, e) => { await B.say('* You tried adding half + half + half.\n* That is one and a half. ManBearPig is confused.'); B.addMercy(e, 15); B.tire(e); } },
+      { name: 'Super Cereal', req: ['kyle'], fn: async (B, e) => { await memberSays(B, 'kyle', "Guys... this is SERIOUS. I'm super cereal!"); await B.say('* ManBearPig feels respected for the first time in its life.'); B.addMercy(e, 40); } },
+      { name: 'Play Dead', req: ['kenny'], fn: async (B, e) => { await B.say("* Kenny played dead.\n* He's had a LOT of practice."); B.addMercy(e, 30); } },
     ],
-    talk: (B, e) => e.data.serious ? (e.data.serious = false, 'GRRR... (ninguém nunca disse isso)') : e.mercy >= 100 ? '...grrrunk. (paz)' : U.pick(['MEIO HOMEM!', 'MEIO URSO!', 'MEIO PORCO!', 'GRRROINK!']),
+    talk: (B, e) => e.data.serious ? (e.data.serious = false, 'GRRR... (nobody ever said that)') : e.mercy >= 100 ? '...grrrunk. (peace)' : U.pick(['HALF MAN!', 'HALF BEAR!', 'HALF PIG!', 'GRRROINK!']),
     patterns: ['claw_sweep', 'mud_rain', 'half_triple'],
   },
   goomba1: {
-    name: 'Goomba', sprite: 'goomba', hp: 320, atk: 9, def: 1, money: 0, voice: 'goomba', tiredAt: 0,
-    check: '* GOOMBA - ATK 9 DEF 1\n* Cavaleiro do Imperador. Veio de um reino de cogumelos.',
-    intro: '* SIR GOOMBA ataca!',
-    flavor: ['* Goomba balança a capa de forma dramática.', '* Goomba tenta parecer ameaçador.', '* Goomba ensaia sua risada maligna.'],
+    name: 'Sir Goomba', sprite: 'goomba', hp: 320, atk: 9, def: 1, money: 0, voice: 'goomba', tiredAt: 0,
+    check: "* SIR GOOMBA - ATK 9 DEF 1\n* The Emperor's knight. Came from a mushroom kingdom. A plumber kept jumping on him.",
+    intro: '* SIR GOOMBA attacks!',
+    flavor: ['* Sir Goomba swishes his cape dramatically.', '* Sir Goomba tries to look scary.', '* Sir Goomba practices his evil laugh.'],
     art: (B, e, f) => Spr.enemy('goomba', f, e.data.squash > 0 ? 'squash' : e.mercy >= 60 ? 'happy' : 'angry'),
     acts: [
-      { name: 'Elogiar capa', fn: async (B, e) => { await B.say('* Você disse que a capa do Goomba é muito estilosa.'); await enemySays(B, e, 'VERDADE?! Q-quer dizer... É CLARO que é!'); B.addMercy(e, 30); } },
-      { name: 'Pular nele', fn: async (B, e) => { Sfx.play('jump'); await wait(10); Sfx.play('stomp'); e.data.squash = 30; await B.say('* Stan pulou na cabeça do Goomba!\n* Ele ficou achatado... e desachatou.'); B.damageEnemy(e, 30, B.member('stan')); B.addMercy(e, 15); } },
-      { name: 'Rir junto', req: ['kyle'], fn: async (B, e) => { await B.say('* Kyle e Stan riram da risada maligna do Goomba.'); await enemySays(B, e, 'Vocês... gostaram da minha risada?! HO HO!'); B.addMercy(e, 40); } },
+      { name: 'Praise Cape', fn: async (B, e) => { await B.say("* You told Sir Goomba his cape looks super cool."); await enemySays(B, e, 'REALLY?! I-I mean... OF COURSE it does!'); B.addMercy(e, 30); } },
+      { name: 'Stomp', fn: async (B, e) => { Sfx.play('jump'); await wait(10); Sfx.play('stomp'); e.data.squash = 30; await B.say('* Stan jumped on Sir Goomba\'s head!\n* He got flattened... then un-flattened.'); B.damageEnemy(e, 30, B.member('stan')); B.addMercy(e, 15); } },
+      { name: 'Laugh Along', req: ['kyle'], fn: async (B, e) => { await B.say("* Kyle and Stan laughed at Sir Goomba's evil laugh."); await enemySays(B, e, 'You guys... like my laugh?! HO HO!'); B.addMercy(e, 40); } },
     ],
     onTurnEnd: async (B, e) => { e.data.squash = 0; },
-    talk: (B, e) => U.pick(['HO HO HO! Tremam!', 'Pela CAPA do Imperador!', 'Eu sou um Goomba, NÃO um cogumelo!', 'Prepare-se para ser... PISOTEADO!']),
+    talk: (B, e) => U.pick(['HO HO HO! Tremble!', 'For the Emperor\'s CAPE!', "I'm a Goomba, NOT a mushroom!", 'Prepare to be STOMPED! ...wait, that usually happens to ME.']),
     patterns: ['goomba_march', 'cape_slash'],
   },
   goomba: {
-    name: 'Goomba', sprite: 'goomba', hp: 800, atk: 12, def: 2, money: 0, voice: 'goomba', tiredAt: 0,
-    check: '* GOOMBA - ATK 12 DEF 2\n* O cavaleiro fiel do Imperador. Prometeram a ele uma capa maior.',
-    flavor: ['* Goomba protege o Imperador.', '* A capa do Goomba ondula sem vento.'],
+    name: 'Sir Goomba', sprite: 'goomba', hp: 800, atk: 12, def: 2, money: 0, voice: 'goomba', tiredAt: 0,
+    check: "* SIR GOOMBA - ATK 12 DEF 2\n* The Emperor's loyal knight. Was promised a bigger cape.",
+    flavor: ['* Sir Goomba protects the Emperor.', '* Sir Goomba\'s cape flutters with no wind.'],
     art: (B, e, f) => Spr.enemy('goomba', f, e.data.squash > 0 ? 'squash' : e.data.sad ? 'sad' : e.mercy >= 60 ? 'happy' : 'angry'),
     acts: [
-      { name: 'Elogiar capa', fn: async (B, e) => { await B.say('* Você elogiou a capa do Goomba de novo.\n* Ele ficou vermelho. Mais vermelho que a capa.'); B.addMercy(e, 20); } },
-      { name: 'Pular nele', fn: async (B, e) => { Sfx.play('jump'); await wait(10); Sfx.play('stomp'); e.data.squash = 30; await B.say('* Stan pulou no Goomba! BOING!'); B.damageEnemy(e, 40, B.member('stan')); B.addMercy(e, 10); } },
-      { name: 'Capa maior?', req: ['kyle'], fn: async (B, e) => {
-        await memberSays(B, 'kyle', 'Goomba... o Cartman já te deu ALGUMA coisa que prometeu?');
-        await enemySays(B, e, '...ele prometeu uma CAPA MAIOR...');
+      { name: 'Praise Cape', fn: async (B, e) => { await B.say('* You praised Sir Goomba\'s cape again.\n* He blushed. Redder than the cape.'); B.addMercy(e, 20); } },
+      { name: 'Stomp', fn: async (B, e) => { Sfx.play('jump'); await wait(10); Sfx.play('stomp'); e.data.squash = 30; await B.say('* Stan jumped on Sir Goomba! BOING!\n* (Old habits.)'); B.damageEnemy(e, 40, B.member('stan')); B.addMercy(e, 10); } },
+      { name: 'Bigger Cape?', req: ['kyle'], fn: async (B, e) => {
+        await memberSays(B, 'kyle', 'Goomba... has Cartman EVER given you anything he promised?');
+        await enemySays(B, e, '...he promised me a BIGGER CAPE...');
         const c = B.enemies.find((x) => x.id === 'cartman' && !x.gone);
-        if (c) await enemySays(B, c, 'NÃO ESCUTA ELES, GOOMBA!');
+        if (c) await enemySays(B, c, "DON'T LISTEN TO HIM, GOOMBA! HE'S A JERSEY GUY!");
         e.data.sad = true; B.addMercy(e, 35);
       } },
-      { name: 'Afagar', req: ['kenny'], fn: async (B, e) => { await B.say('* Kenny deu tapinhas carinhosos no chapéu do Goomba.\n* (Era a cabeça dele.)'); B.addMercy(e, 20); } },
+      { name: 'Pat', req: ['kenny'], fn: async (B, e) => { await B.say("* Kenny gave Sir Goomba a gentle pat on the hat.\n* (It was his head.)"); B.addMercy(e, 20); } },
     ],
     onTurnEnd: async (B, e) => { e.data.squash = 0; },
-    talk: (B, e) => e.data.sad ? 'Majestade... é verdade?' : U.pick(['Pela glória do Imperador!', 'HO HO HO!', 'Minha capa vai ficar MAIOR!']),
+    talk: (B, e) => e.data.sad ? 'Your Majesty... is it true?' : U.pick(['For the glory of the Emperor!', 'HO HO HO!', 'My cape will be BIGGER!']),
     onSpare: async (B, e) => {
-      await enemySays(B, e, 'Majestade... você MENTIU pra mim. EU ME DEMITO!');
+      await enemySays(B, e, 'Your Majesty... you LIED to me. I QUIT!');
+      await enemySays(B, e, 'First the Koopas took my job, now this... DEY TOOK ER JERBS!');
       const c = B.enemies.find((x) => x.id === 'cartman' && !x.gone);
-      if (c) { c.data.alone = true; await enemySays(B, c, 'Ah, é?! Então EU MESMO acabo com vocês!'); }
+      if (c) { c.data.alone = true; await enemySays(B, c, "Oh, yeah?! Then I'LL beat you guys MYSELF!"); }
     },
     onDefeat: (B, e) => {
       (async () => { await wait(10); const c = B.enemies.find((x) => x.id === 'cartman' && !x.gone); if (c) c.data.alone = true; })();
@@ -5037,9 +5041,9 @@ const ENEMIES = {
   },
   cartman: {
     name: 'Cartman', hp: 2000, atk: 15, def: 3, money: 0, voice: 'cartman', tiredAt: 0,
-    check: '* CARTMAN - ATK 15 DEF 3\n* O Imperador do Mundo Sombrio. Diz que não é gordo, tem ossos largos.',
-    flavor: (B, e) => e.data.alone ? U.pick(['* Cartman bate o pé no chão.', '* Cartman está ficando vermelho de raiva.', '* O Imperador perdeu o cavaleiro. E a paciência.'])
-      : U.pick(['* O Imperador Cartman ergue o cetro de Cheesy Poof.', '* Cartman exige que todos respeitem sua autoridade.', '* Cheiro de frango frito e arrogância.']),
+    check: "* CARTMAN - ATK 15 DEF 3\n* Emperor of the Dark World. He's not fat, he's big-boned.",
+    flavor: (B, e) => e.data.alone ? U.pick(['* Cartman stomps his feet.', '* Cartman is turning red with rage.', '* The Emperor lost his knight. And his patience.'])
+      : U.pick(['* Emperor Cartman raises his Cheesy Poof scepter.', '* Cartman demands that everyone respect his authoritah.', '* Smells like fried chicken and arrogance.']),
     art: (B, e, f) => {
       let expr = e.data.alone ? 'angry' : 'smug';
       if (e.mercy >= 100) expr = 'sad';
@@ -5049,36 +5053,36 @@ const ENEMIES = {
       return Spr.enemy('cartman', f, expr, e.data.attack > 0 ? 'attack' : 'idle');
     },
     acts: [
-      { name: 'Respeitar', fn: async (B, e) => { await B.say('* Você se curvou e respeitou a autoridade do Cartman.'); e.data.laugh = 40; await enemySays(B, e, 'ISSO! Finalmente alguém com bom senso!'); B.addMercy(e, 12); } },
-      { name: 'Ossos largos', fn: async (B, e) => { await B.say('* Você disse que o Cartman não é gordo.\n* Ele só tem ossos largos.'); await enemySays(B, e, '...você... você entende!'); B.addMercy(e, 22); } },
-      { name: 'Dar Cheesy Poofs', fn: async (B, e) => {
+      { name: 'Respect', fn: async (B, e) => { await B.say('* You bowed and respected Cartman\'s authoritah.'); e.data.laugh = 40; await enemySays(B, e, 'YES! FINALLY someone with common sense!'); B.addMercy(e, 12); } },
+      { name: 'Big-Boned', fn: async (B, e) => { await B.say("* You told Cartman he isn't fat.\n* He's just big-boned."); await enemySays(B, e, '...You... you GET me!'); B.addMercy(e, 22); } },
+      { name: 'Cheesy Poofs', fn: async (B, e) => {
         const i = G.items.indexOf('cheesy');
-        if (i >= 0) { G.items.splice(i, 1); await B.say('* Você ofereceu um saco de Cheesy Poofs.\n* Cartman devorou tudo em 2 segundos.'); await enemySays(B, e, 'Hmm... CHEESY POOFS!'); B.addMercy(e, 30); }
-        else { await B.say('* Você procurou nos bolsos, mas não tinha Cheesy Poofs.\n* (A loja do Butters vende.)'); B.addMercy(e, 3); }
+        if (i >= 0) { G.items.splice(i, 1); await B.say('* You offered a bag of Cheesy Poofs.\n* Cartman ate the whole thing in two seconds.'); await enemySays(B, e, 'Mmm... CHEESY POOFS!'); B.addMercy(e, 30); }
+        else { await B.say("* You checked your pockets. No Cheesy Poofs.\n* (Butters' shop sells them.)"); B.addMercy(e, 3); }
       } },
-      { name: 'Discutir', req: ['kyle'], fn: async (B, e) => {
-        await memberSays(B, 'kyle', 'CARTMAN, SEU GORDO EGOÍSTA!');
-        await enemySays(B, e, 'EU NÃO SOU GORDO, KYLE! EU TENHO OSSOS LARGOS!');
-        await B.say('* Os dois gritaram um com o outro por cinco minutos.\n* Cartman ficou exausto.');
+      { name: 'Argue', req: ['kyle'], fn: async (B, e) => {
+        await memberSays(B, 'kyle', 'CARTMAN, YOU FATASS!');
+        await enemySays(B, e, "I'M NOT FAT, I'M BIG-BONED, KAHL!");
+        await B.say('* They screamed at each other for five minutes.\n* Cartman is exhausted.');
         B.tire(e);
       } },
-      { name: 'Ligar pra mãe', req: ['kenny'], fn: async (B, e) => {
-        await B.say('* Kenny pegou o celular e ligou para a mãe do Cartman.');
-        await enemySays(B, e, 'MÃE?! Não, mãe, eu tô OCUPADO! ...Sim, eu vou comer legumes.');
+      { name: 'Call Mom', req: ['kenny'], fn: async (B, e) => {
+        await B.say("* Kenny pulled out a phone and called Cartman's mom.");
+        await enemySays(B, e, "MOOOM! No, Mom, I'm BUSY! ...Yes, I'll eat my vegetables.");
         B.addMercy(e, 25);
       } },
     ],
     canSpare: (B, e) => !B.enemies.some((x) => (x.id === 'goomba') && !x.gone),
     onSpareFail: async (B, e, m) => {
-      if (B.enemies.some((x) => x.id === 'goomba' && !x.gone)) await B.say('* Cartman se esconde atrás do Goomba.\n* Ele não vai desistir enquanto tiver um cavaleiro!');
-      else await B.say('* Você tentou poupar o Cartman.\n* Mas o nome dele não estava {y}AMARELO{w}...');
+      if (B.enemies.some((x) => x.id === 'goomba' && !x.gone)) await B.say('* Cartman hides behind Sir Goomba.\n* He won\'t give up while he still has a knight!');
+      else await B.say("* You tried to spare Cartman.\n* But his name wasn't {y}YELLOW{w}...");
     },
     onTurnEnd: async (B, e) => { if (e.data.laugh > 0) e.data.laugh = 0; if (e.data.attack > 0) e.data.attack = 0; },
     talk: (B, e) => {
-      if (e.mercy >= 100) return 'Tá... talvez eu tenha exagerado um pouquinho.';
-      if (e.tired) return 'Hff... hff... vocês... não... respeitam...';
-      if (e.data.alone) return U.pick(['VOCÊS VÃO PAGAR!', 'Sem o Goomba eu sou ainda MAIS forte!', 'Isso é contra as regras do MEU mundo!']);
-      return U.pick(['RESPEITEM MINHA AUTORIDADE!', 'Goomba, ACABA com eles!', 'Neste mundo EU sou o rei!', 'Por que vocês nunca me deixam ganhar?!']);
+      if (e.mercy >= 100) return 'Fine... maybe I went a LITTLE too far.';
+      if (e.tired) return 'Hff... hff... you guys... suck...';
+      if (e.data.alone) return U.pick(['BEEFCAKE! BEEEEFCAKE!', 'Whatever! I do what I want!', "This is MY world! I make the rules!"]);
+      return U.pick(['RESPECT MY AUTHORITAH!', 'Goomba, GET THEM!', "In this world, I'M the king!", 'Why do you guys never let me win?!', 'Screw you guys!']);
     },
     onDefeat: (B, e) => { e.data.cry = true; e.gone = 'defeated'; return false; },
     pickPattern: (B, e) => U.pick(e.data.alone ? ['belly_wave', 'screw_you', 'scepter_beam', 'kfc_buckets', 'authority'] : ['cheesy_storm', 'authority', 'kfc_buckets', 'scepter_beam']),
@@ -5135,7 +5139,7 @@ function paintSchool(g, w) {
   for (let y = top + 4; y < base; y += 6) { p.rect(x0, y, x1 - x0, 1, '#9a4436'); for (let x = x0 + ((y / 6) % 2) * 8; x < x1; x += 16) p.rect(x, y - 5, 1, 5, '#9a4436'); }
   p.rect(x0 - 4, top - 6, x1 - x0 + 8, 7, '#7a3a30');
   p.rect(150, 28, 180, 16, '#f4f0e0'); p.rect(150, 28, 180, 1, PAL.ol); p.rect(150, 43, 180, 1, PAL.ol);
-  Font.draw(g, 'ESCOLA DE SOUTH PARK', 240, 27, '#2a3a8a', { align: 'center' });
+  Font.draw(g, 'SOUTH PARK ELEMENTARY', 240, 27, '#2a3a8a', { align: 'center' });
   for (const wx of [76, 120, 330, 374]) for (const wy of [52, 80]) { p.rect(wx - 1, wy - 1, 28, 20, PAL.ol); p.rect(wx, wy, 26, 18, '#a8d0f0'); p.rect(wx + 12, wy, 1, 18, '#f4f0e0'); }
   p.rect(219, 64, 42, 48, PAL.ol); p.rect(220, 65, 40, 47, '#5a3a24');
   p.rect(222, 67, 17, 45, '#7a5434'); p.rect(241, 67, 17, 45, '#7a5434'); p.px(236, 90, PAL.gold); p.px(244, 90, PAL.gold);
@@ -5155,15 +5159,15 @@ function paintHall(g, w) {
     p.rect(x + 12, 62, 2, 4, '#c8d0e0');
   }
   for (const dx of [112, 302]) { p.rect(dx - 1, 30, 30, 62, PAL.ol); p.rect(dx, 31, 28, 61, '#8a6a46'); p.rect(dx + 6, 38, 16, 14, '#a8d0f0'); p.px(dx + 23, 62, PAL.gold); }
-  p.rect(178, 14, 52, 16, '#f4f0e0'); Mini.draw(g, 'DROGAS FAZEM', 204, 16, '#c02020', { align: 'center' }); Mini.draw(g, "MAL, M'KAY", 204, 23, '#c02020', { align: 'center' });
-  p.rect(372, 16, 40, 14, '#ffe060'); Mini.draw(g, 'VAI TIME!', 392, 21, '#2a3a8a', { align: 'center' });
+  p.rect(178, 14, 52, 16, '#f4f0e0'); Mini.draw(g, 'DRUGS ARE', 204, 16, '#c02020', { align: 'center' }); Mini.draw(g, "BAD, M'KAY", 204, 23, '#c02020', { align: 'center' });
+  p.rect(372, 16, 40, 14, '#ffe060'); Mini.draw(g, 'GO COWS!', 392, 21, '#2a3a8a', { align: 'center' });
 }
 
 /* ---------- MUNDO DA LUZ ---------- */
 const LIGHT_ROWS = (w) => carve(w, 15, [['.', 0, 7, w - 1, 9], ['-', 0, 10, w - 1, 10], ['=', 0, 11, w - 1, 11], ['+', 0, 12, w - 1, 12], ['=', 0, 13, w - 1, 13]]);
 
 ROOMS.ponto = {
-  name: 'Ponto de Ônibus', tileset: 'light', dark: false, music: 'town',
+  name: 'Bus Stop', tileset: 'light', dark: false, music: 'town',
   map: LIGHT_ROWS(30),
   bg(g, cx) {
     if (hasFlag('ending')) BG.sky(g, '#f08a5a', '#ffd0a0', 130); else BG.sky(g);
@@ -5178,12 +5182,16 @@ ROOMS.ponto = {
     { type: 'prop', name: 'mailbox', x: 370, y: 126, solid: [10, 4] },
     { type: 'prop', name: 'pine', x: 452, y: 150, solid: [10, 6] },
     { type: 'look', kind: 'look', visible: false, solid: false, x: 96, y: 150, area: { x: -12, y: -20, w: 24, h: 24 },
-      interact: () => Dlg.say(['* (Um boneco de neve. Alguém desenhou um bigode nele.)']) },
+      interact: () => Dlg.say(['* (A snowman. Someone gave it a mustache.)', '* (A note on it says: "PROPERTY OF ERIC CARTMAN. HANDS OFF, KAHL.")']) },
     { type: 'look', kind: 'look', visible: false, solid: false, x: 236, y: 172, area: { x: -10, y: -30, w: 20, h: 32 },
-      interact: () => Dlg.say(['* (PONTO DE ÔNIBUS. O ônibus da escola passa aqui... às vezes.)']) },
+      interact: () => Dlg.say(['* (BUS STOP. The school bus comes here... sometimes.)', '* (You can almost hear Ms. Crabtree yelling "SIT DOWN!")']) },
     { type: 'look', kind: 'look', visible: false, solid: false, x: 70, y: 116, area: { x: -30, y: -10, w: 60, h: 12 },
-      interact: () => Dlg.say(['* (A sua casa. Sua mãe deve estar fazendo panquecas.)', '* (Ou seu pai deve estar fazendo alguma besteira.)']) },
-    kidObj('kyle', 266, 170, 'left', { cond: () => !hasFlag('intro_done') && !hasFlag('ending'), talk: () => Dlg.say(['kyle: Vamos, Stan! A escola é pra direita.']) }),
+      interact: () => Dlg.say(['* (Your house. Through the window, you can see your dad yelling at the TV.)', '* ("I THOUGHT THIS WAS AMERICA!")']) },
+    { type: 'look', kind: 'look', visible: false, solid: false, x: 231, y: 116, area: { x: -30, y: -10, w: 60, h: 12 },
+      interact: () => Dlg.say(["* (Kyle's house. Somebody inside is yelling.)", '* ("WHAT? WHAT? WHAAAAAT?!")']) },
+    { type: 'look', kind: 'look', visible: false, solid: false, x: 384, y: 116, area: { x: -30, y: -10, w: 60, h: 12 },
+      interact: () => Dlg.say(["* (Cartman's house. There's a sign on the door.)", '* ("KEEP OUT! NO HIPPIES! NO KAHLS!")']) },
+    kidObj('kyle', 266, 170, 'left', { cond: () => !hasFlag('intro_done') && !hasFlag('ending'), talk: () => Dlg.say(["kyle: Come on, Stan! School's this way."]) }),
     { type: 'exit', x: 468, y: 104, w: 20, h: 120, to: 'escola', tx: 20, ty: 'same', facing: 'right', cond: () => !hasFlag('ending') },
   ],
   async enter() {
@@ -5192,22 +5200,22 @@ ROOMS.ponto = {
     const kyle = World.find('kyle');
     await wait(24);
     await Dlg.say([
-      'kyle: E aí, Stan.',
-      'stan: E aí, Kyle.',
-      'kyle/annoyed: Cadê o Cartman? Ele nunca perde o ônibus. Ele adora o banco do fundo.',
-      'stan: E o Kenny?',
-      'kyle: O Kenny morreu ontem. De novo.',
-      'stan: Ah, é.',
-      'kyle: ...{p10}Ele volta.',
+      'kyle: Hey, Stan.',
+      'stan: Hey, Kyle.',
+      "kyle/annoyed: Where's Cartman? He never misses the bus. He loves the back seat.",
+      'stan: What about Kenny?',
+      'kyle: Kenny died yesterday. Again.',
+      'stan: Oh, right.',
+      "kyle: ...{p10}He'll be back.",
     ]);
     await wait(10);
     Cut.face(kyle, 'down');
     await Dlg.say([
-      'kyle/worried: Mas é estranho. Ontem o Cartman passou o dia dizendo que achou um "reino secreto" no armário de materiais da escola.',
-      'kyle/annoyed: Disse que ia virar IMPERADOR e que a gente ia ter que respeitar a autoridade dele.',
-      'stan: Típico do Cartman.',
-      '* (O ônibus não veio.)',
-      'kyle: Que se dane, vamos a pé. Vem, Stan!',
+      'kyle/worried: But it\'s weird. Yesterday Cartman kept saying he found a "secret kingdom" in the school supply closet.',
+      'kyle/annoyed: He said he was gonna be EMPEROR, and we\'d all have to respect his "authoritah."',
+      'stan: Typical Cartman.',
+      '* (The bus never came.)',
+      "kyle: Screw it, let's walk. Come on, Stan!",
     ]);
     setFlag('intro_done');
     Cut.face(kyle, 'right');
@@ -5217,7 +5225,7 @@ ROOMS.ponto = {
 };
 
 ROOMS.escola = {
-  name: 'Escola de South Park', tileset: 'light', dark: false, music: 'town',
+  name: 'South Park Elementary', tileset: 'light', dark: false, music: 'town',
   map: LIGHT_ROWS(30),
   bg(g, cx) { BG.sky(g); BG.mountains(g, cx, 14); },
   paint: (g, w) => paintSchool(g, w),
@@ -5225,19 +5233,23 @@ ROOMS.escola = {
   objects: () => [
     { type: 'npc', kind: 'npc', who: 'barbrady', x: 120, y: 150, facing: 'down', name_: 'barbrady', bw: 12,
       talk: async () => {
-        await Dlg.say([{ who: 'barbrady', text: '* Ok, pessoal, circulando! Nada pra ver aqui!' }]);
-        if (!hasFlag('barb2')) { setFlag('barb2'); await Dlg.say([{ who: 'barbrady', text: '* Isto é uma ES-CO-LA. É onde as crianças vão para... é... aprender a ler?' }, { who: 'barbrady', text: '* Eu acho que eu deveria tentar isso um dia.' }]); }
+        await Dlg.say([{ who: 'barbrady', text: '* Okay, move along, people! Nothing to see here!' }]);
+        if (!hasFlag('barb2')) { setFlag('barb2'); await Dlg.say([{ who: 'barbrady', text: "* This is a SCH... SKUH-OOL. It's where kids go to... uh... learn how to read?" }, { who: 'barbrady', text: '* Maybe I should try that someday.' }]); }
       } },
-    kidObj('kyle', 278, 128, 'down', { cond: () => !hasFlag('fell'), talk: () => Dlg.say(['kyle: O armário de materiais fica no fim do corredor. Vamos!']) }),
+    kidObj('kyle', 278, 128, 'down', { cond: () => !hasFlag('fell'), talk: () => Dlg.say(["kyle: The supply closet is at the end of the hall. Let's go!"]) }),
     { type: 'prop', name: 'trash', x: 196, y: 124, solid: [12, 5] },
     { type: 'prop', name: 'bench', x: 360, y: 128, solid: [30, 5] },
+    { type: 'look', kind: 'look', visible: false, solid: false, x: 196, y: 124, area: { x: -10, y: -14, w: 20, h: 18 },
+      interact: () => Dlg.say(["* (A trash can. There's a towel inside.)", '* (It whispers: "Don\'t forget to bring a towel!")']) },
+    { type: 'look', kind: 'look', visible: false, solid: false, x: 360, y: 128, area: { x: -18, y: -14, w: 36, h: 18 },
+      interact: () => Dlg.say(['* (Someone carved "TWEEK WAS HERE" into the bench.)', '* (The letters are very, very shaky.)']) },
     { type: 'exit', x: 224, y: 104, w: 32, h: 10, to: 'corredor', tx: 40, ty: 156, facing: 'right' },
     { type: 'exit', x: -12, y: 104, w: 20, h: 120, to: 'ponto', tx: 448, ty: 'same', facing: 'left' },
   ],
 };
 
 ROOMS.corredor = {
-  name: 'Corredor da Escola', tileset: 'school', dark: false, music: 'town',
+  name: 'School Hallway', tileset: 'school', dark: false, music: 'town',
   map: carve(32, 15, [['f', 0, 6, 31, 12]]),
   bgColor: '#2a2a34',
   paint: (g, w) => paintHall(g, w),
@@ -5248,18 +5260,20 @@ ROOMS.corredor = {
         if (!hasFlag('mackey')) {
           setFlag('mackey');
           await Dlg.say([
-            'mackey: Ah, Stan. Bom dia, m\'kay.',
-            'mackey/worried: O Eric entrou no armário de materiais faz uma hora e não saiu mais, m\'kay?',
-            'mackey: Vá lá chamar ele. A aula já vai começar, m\'kay?',
-            'mackey/happy: E lembre-se: drogas fazem mal, m\'kay.',
+            "mackey: Ah, Stan. Good morning, m'kay.",
+            "mackey/worried: Eric went into the supply closet an hour ago, and he never came out, m'kay?",
+            "mackey: Go get him. Class is about to start, m'kay?",
+            "mackey/happy: And remember: drugs are bad, m'kay. You shouldn't do drugs, m'kay.",
           ]);
-        } else await Dlg.say(['mackey: O armário fica no fim do corredor, m\'kay?']);
+        } else await Dlg.say(["mackey: The closet is at the end of the hall, m'kay? Mmmkay."]);
       } },
     kidObj('kyle', 444, 128, 'right', { cond: () => !hasFlag('fell'), talk: () => closetScene() }),
     { type: 'prop', name: hasFlag('fell') ? 'closetOpen' : 'closet', x: 484, y: 98, name_: 'closet', solid: null, area: { x: -16, y: -4, w: 32, h: 30 },
-      interact: () => (hasFlag('fell') ? Dlg.say(['* (O armário de materiais. Lá dentro só tem esfregões.)']) : closetScene()) },
+      interact: () => (hasFlag('fell') ? Dlg.say(['* (The supply closet. Just mops in there now.)']) : closetScene()) },
     { type: 'look', kind: 'look', visible: false, solid: false, x: 204, y: 100, area: { x: -28, y: -6, w: 56, h: 14 },
-      interact: () => Dlg.say(['* (Um cartaz: "DROGAS FAZEM MAL, M\'KAY".)', '* (Alguém escreveu embaixo: "o Cartman também".)']) },
+      interact: () => Dlg.say(['* (A poster: "DRUGS ARE BAD, M\'KAY.")', '* (Someone wrote underneath it: "SO IS CARTMAN.")']) },
+    { type: 'look', kind: 'look', visible: false, solid: false, x: 392, y: 100, area: { x: -22, y: -6, w: 44, h: 14 },
+      interact: () => Dlg.say(['* (A banner: "GO COWS!")', '* (The South Park Cows have never won a single game.)']) },
     { type: 'exit', x: -12, y: 96, w: 20, h: 120, to: 'escola', tx: 240, ty: 124, facing: 'down' },
   ],
 };
@@ -5272,14 +5286,14 @@ PROP_SIZE.closetOpen = [26, 42];
 
 async function closetScene() {
   if (hasFlag('fell')) return;
-  if (!hasFlag('mackey')) { await Dlg.say(['kyle: Melhor falar com o Sr. Mackey antes, cara. Ele tá ali no meio do corredor.']); return; }
+  if (!hasFlag('mackey')) { await Dlg.say(["kyle: We should talk to Mr. Mackey first, dude. He's in the middle of the hall."]); return; }
   const kyle = World.find('kyle'), closet = World.find('closet');
   Music.stop(20);
   Cut.face(kyle, 'right');
-  await Dlg.say(['kyle: Cartman? Você tá aí dentro?']);
+  await Dlg.say(['kyle: Cartman? You in there?']);
   await wait(24);
-  await Dlg.say(['* (Silêncio.)']);
-  await Dlg.say(['kyle/worried: ...Tem uma luz estranha saindo por baixo da porta.', 'kyle: Stan... abre você.']);
+  await Dlg.say(['* (Silence.)']);
+  await Dlg.say(["kyle/worried: ...There's a weird light coming from under the door.", 'kyle: Stan... you open it.']);
   await Cut.walk(World.player, 476, 116, 1.5);
   World.player.facing = 'up';
   await wait(10);
@@ -5288,7 +5302,7 @@ async function closetScene() {
   await wait(24);
   Sfx.play('rumble'); Shake.start(2, 50);
   Music.play('tension');
-  await Dlg.say(['kyle/surprised: Stan, espera! Tem alguma coisa—']);
+  await Dlg.say(["kyle/surprised: Stan, wait! There's something—"]);
   Sfx.play('whoosh');
   await Fade.out(14);
   Music.stop();
@@ -5306,11 +5320,11 @@ function darkBg(g, cx, cy, opts = {}) {
 }
 
 ROOMS.queda = {
-  name: 'Lugar da Queda', tileset: 'dark', dark: true, music: 'field',
+  name: 'Landing Spot', tileset: 'dark', dark: true, music: 'field',
   map: carve(20, 15, [['.', 5, 3, 14, 9], ['.', 4, 4, 15, 8], ['.', 15, 5, 19, 8], [',', 14, 6, 19, 7]]),
   bg: (g, cx, cy) => darkBg(g, cx, cy, { seed: 2 }),
   objects: () => [
-    { type: 'save', x: 104, y: 96, text: ['* (Você caiu num mundo estranho e escuro.)', '* (Mesmo assim, isso te enche de DETERMINAÇÃO.)'] },
+    { type: 'save', x: 104, y: 96, text: ['* (You fell into a strange, dark world.)', '* (Somehow, this fills you with DETERMINATION.)'] },
     { type: 'exit', x: 310, y: 80, w: 20, h: 64, to: 'campo1', tx: 12, ty: 'same', facing: 'right' },
   ],
 };
@@ -5323,7 +5337,7 @@ async function arrivalScene() {
   Fade.color = '#ffffff';
   await Fade.to(0, 50);
   await wait(30);
-  await Dlg.say(['* ...', '* (Está tudo escuro e silencioso.)']);
+  await Dlg.say(['* ...', '* (Everything is dark and quiet.)']);
   World.remove(stanL);
   p.x = 150; p.y = 120; p.visible = true; p.facing = 'down';
   Sfx.play('appear');
@@ -5334,16 +5348,17 @@ async function arrivalScene() {
   Sfx.play('appear');
   await wait(16);
   await Dlg.say([
-    'kyle/hurt: Ugh... Stan? Você tá bem?',
-    'kyle/surprised: ...Cara. Por que você tá de ARMADURA?',
-    'stan: Por que VOCÊ tá vestido de mago?',
+    'kyle/hurt: Ugh... Stan? You okay?',
+    'kyle/surprised: ...Dude. Why are you wearing ARMOR?',
+    'stan: Why are YOU dressed like a wizard?',
   ]);
   Cut.face(kyle, 'down'); await wait(16); Cut.face(kyle, 'left');
   await Dlg.say([
-    'kyle/shock: ...QUE DIABOS?!',
-    'kyle/worried: Onde a gente tá? Isso não parece o armário da escola.',
-    'kyle/annoyed: Deve ser o tal "reino secreto" do Cartman.',
-    'kyle/determined: Vamos achar aquele gordo e dar o fora daqui.',
+    'kyle/shock: ...WHAT THE HELL?!',
+    'stan: Dude, this is pretty messed up right here.',
+    "kyle/worried: Where are we? This isn't the school closet.",
+    'kyle/annoyed: This must be Cartman\'s stupid "secret kingdom."',
+    "kyle/determined: Let's find that fatass and get out of here.",
   ]);
   await Cut.join('kyle');
   World.adopt(kyle);
@@ -5352,14 +5367,14 @@ async function arrivalScene() {
 }
 
 ROOMS.campo1 = {
-  name: 'Campos de Cheesy Poofs', tileset: 'dark', dark: true, music: 'field',
+  name: 'Cheesy Poof Fields', tileset: 'dark', dark: true, music: 'field',
   map: carve(40, 15, [['.', 0, 4, 39, 8], [',', 0, 5, 39, 7], ['.', 9, 2, 15, 3], ['.', 26, 2, 33, 3], ['.', 7, 9, 15, 10], ['.', 25, 9, 32, 10]]),
   bg: (g, cx, cy) => darkBg(g, cx, cy, { seed: 3 }),
   objects: () => [
     treeObj(...T(10, 3)), treeObj(...T(14, 3)), treeObj(...T(9, 10)), treeObj(...T(27, 3)), treeObj(...T(32, 10)),
     { type: 'prop', name: 'bag', x: 200, y: 160, solid: [22, 6] },
     { type: 'prop', name: 'candy', x: 440, y: 52, solid: [6, 4] },
-    { type: 'sign', x: 72, y: 76, text: ['* "BEM-VINDO AO MUNDO SOMBRIO DO IMPERADOR CARTMAN."', '* "REGRA Nº 1: RESPEITEM MINHA AUTORIDADE."', '* "REGRA Nº 2: NÃO EXISTE REGRA Nº 2."'] },
+    { type: 'sign', x: 72, y: 76, text: ['* "WELCOME TO THE DARK WORLD OF EMPEROR CARTMAN."', '* "RULE #1: RESPECT MY AUTHORITAH."', '* "RULE #2: NO HIPPIES."', '* "RULE #3: SEE RULE #1."'] },
     kidObj('kenny', 476, 108, 'left', { extra: 'mystery', cond: () => !hasFlag('kenny_joined'), lockFacing: false }),
     { type: 'trigger', x: 320, y: 60, w: 12, h: 100, once: 'kenny_met', run: () => kennyScene() },
     { type: 'exit', x: 630, y: 60, w: 20, h: 100, to: 'campo2', tx: 12, ty: 'same', facing: 'right', cond: () => true },
@@ -5376,56 +5391,62 @@ async function kennyScene() {
   Cut.emote(kenny);
   await wait(20);
   await Dlg.say([{ who: 'kenny', noFace: true, text: '* Mmmph! Mmph mmph!' }]);
-  await Dlg.say(['kyle/surprised: Quem é você?!']);
+  await Dlg.say(['kyle/surprised: Who are you?!']);
   await Cut.walk(kenny, 400, 108, 1.2);
   await wait(10);
-  await Dlg.say(['* (A figura encapuzada abaixa um pouco o capuz...)']);
+  await Dlg.say(['* (The hooded figure lowers its hood a little...)']);
   kenny.extra = '';
   Sfx.play('appear');
   await wait(14);
   await Dlg.say([
     'stan/surprised: KENNY?!',
-    'kenny/happy: Mmph! (Oi, gente!)',
-    'kyle/angry: Você morreu ontem, cara!',
-    'kenny: Mmph mmph mmph. (É. E acordei aqui.)',
-    'kenny: Mmmph... (Toda vez que eu morro eu vou parar num lugar esquisito. Esse aqui é dos legais.)',
-    'kenny: Mmph. (Isso aqui é um {pu}MUNDO SOMBRIO{w}.)',
-    'kenny/worried: Mmph mmph. (O Cartman achou uma {pu}FONTE SOMBRIA{w} no armário da escola e abriu ela.)',
-    'kenny/annoyed: Mmmph. (Agora ele se acha o IMPERADOR daqui. E arranjou um cavaleiro muito esquisito.)',
-    'kenny/worried: Mmph mmph! (Se a fonte não for fechada, a escuridão vai cobrir South Park inteira!)',
-    'kyle/annoyed: Ótimo. Mais um plano idiota do Cartman.',
-    'kenny: Mmph... (Mas existe uma lenda...)',
+    'kenny/happy: Mmph! (Hey, guys!)',
+    'kyle/angry: Dude, you DIED yesterday!',
+    'kenny: Mmph mmph mmph. (Yeah. Then I woke up here.)',
+    "kenny: Mmmph... (Every time I die, I end up somewhere weird. This one's way better than Hell. Satan says hi.)",
+    'kenny: Mmph. (This place is a {pu}DARK WORLD{w}.)',
+    'kenny/worried: Mmph mmph. (Cartman found a {pu}DARK FOUNTAIN{w} in the school closet and opened it.)',
+    'kenny/annoyed: Mmmph. (Now he thinks he\'s the EMPEROR down here. And he got himself a really weird knight.)',
+    "kenny/worried: Mmph mmph! (If the fountain isn't sealed, darkness will cover all of South Park!)",
+    "kyle/annoyed: Great. Another one of Cartman's stupid plans.",
+    "stan: Dude, that's like the fifth one this month.",
+    "kenny: Mmph... (But there's a legend...)",
   ]);
   await Scenes.legend();
   await Dlg.say([
-    'stan: ...Tem um gorro na lenda, Kyle.',
-    'kyle/annoyed: Isso é ridículo.',
-    'kenny/happy: Mmph! (Antes de seguir, vocês precisam aprender a lutar aqui. Eu trouxe um amigo!)',
+    "stan: ...There's a beanie in the legend, Kyle.",
+    'kyle/annoyed: This is ridiculous.',
+    'kenny/happy: Mmph! (Before we go, you need to learn how to fight down here. I brought a friend!)',
   ]);
   const dummy = World.addObject({ type: 'prop', name: 'dummyStand', x: 456, y: 108, solid: [10, 6] });
   Sfx.play('appear');
   await wait(10);
-  await Dlg.say(['* (Kenny tirou um boneco de treino de dentro do capuz.)', '* (Ninguém perguntou como.)']);
+  await Dlg.say(['* (Kenny pulled a training dummy out of his hood.)', '* (Nobody asked how.)']);
   await Cut.join('kenny');
   await Cut.walk(kenny, World.player.x + 22, World.player.y + 8, 2);
   World.adopt(kenny);
   setFlag('kenny_joined');
-  await Dlg.say(['kenny: Mmph! (Vamos lá! É só um treino!)']);
+  await Dlg.say(["kenny: Mmph! (Let's go! It's just practice!)"]);
   const res = await Battle.start({
     enemies: ['srchapeu'], music: 'battle', money: 0,
-    intro: '* O Sr. Chapéu bloqueia o caminho!\n* (Kenny vai te ensinar a lutar.)',
+    intro: '* Mr. Hat blocks the way!\n* (Kenny is gonna teach you how to fight.)',
     onTurn: async (B) => {
       const tips = {
-        1: '* (Kenny: LUTAR ataca. AGIR faz coisas diferentes com o inimigo. POUPAR funciona quando o nome dele estiver {y}AMARELO{w}.)',
-        2: '* (Kenny: No turno do inimigo, mova a sua {r}ALMA{w}. Passar raspando nas balas enche a barra de {o}TP{w}!)',
-        3: '* (Kenny: TP serve para MAGIA. Kyle e eu temos magias. Agora poupe ou derrote o Sr. Chapéu!)',
+        1: "* (Kenny: FIGHT attacks. ACT does stuff to the enemy. SPARE works when the enemy's name is {y}YELLOW{w}.)",
+        2: "* (Kenny: On the enemy's turn, move your {r}SOUL{w}. Grazing bullets fills up the {o}TP{w} bar!)",
+        3: '* (Kenny: TP is for MAGIC. Kyle and I know spells. Now spare Mr. Hat or beat him up!)',
       };
       if (tips[B.turn]) await B.say(tips[B.turn]);
     },
   });
   if (res === 'lose') return;
   World.remove(dummy);
-  await Dlg.say(['kenny/happy: Mmph mmph! (Muito bem! Vocês são naturais!)', '* (Kenny te deu 2 {y}Cheesy Poofs{w} e 30 D$.)']);
+  await Dlg.say([
+    'kenny/happy: Mmph mmph! (Nice! You guys are naturals!)',
+    '* (Kenny gave you 2 {y}Cheesy Poofs{w} and 30 D$.)',
+    'stan: Dude, since when do you have money?',
+    "kenny/happy: Mmph mmph. (Dark World money. Down here, I'm practically rich.)",
+  ]);
   addItem('cheesy'); addItem('cheesy'); G.money += 30;
   Sfx.play('item');
   setFlag('tutorial_done');
@@ -5433,7 +5454,7 @@ async function kennyScene() {
 }
 
 ROOMS.campo2 = {
-  name: 'Campos de Cheesy - Leste', tileset: 'dark', dark: true, music: 'field',
+  name: 'Cheesy Fields - East', tileset: 'dark', dark: true, music: 'field',
   map: carve(50, 15, [['.', 0, 4, 49, 8], [',', 0, 5, 49, 7], ['.', 11, 2, 19, 3], ['.', 27, 2, 40, 3], ['.', 7, 9, 19, 11], ['.', 26, 9, 39, 11]]),
   bg: (g, cx, cy) => darkBg(g, cx, cy, { seed: 4 }),
   objects: () => [
@@ -5456,16 +5477,17 @@ async function goombaIntro() {
   Sfx.play('jump');
   await Cut.walk(gb, 250, 104, 3);
   await Dlg.say([
-    'goomba/angry: ALTO LÁ, HERÓIS!',
-    'goomba: EU SOU {r}SIR GOOMBA{w}! O CAVALEIRO DA CAPA!',
-    'goomba: SERVO MAIS LEAL DO GRANDE {y}IMPERADOR CARTMAN{w}!',
-    'kyle/annoyed: ...Isso é um cogumelo?',
-    'goomba/shock: EU NÃO SOU UM COGUMELO! SOU UM GOOMBA! É COMPLETAMENTE DIFERENTE!',
-    'goomba: Eu caí aqui vindo de um reino distante... um reino de cogumelos e canos verdes. Mas isso não importa!',
-    'goomba/happy: O Imperador prometeu que, se eu acabar com vocês, ele me dá uma {y}CAPA AINDA MAIOR{w}!',
-    'stan: Você já tem uma capa.',
-    'goomba/angry: UMA CAPA {shake}MAIOR{shake}, EU DISSE!!',
-    'goomba: Mas hoje estou ocupado demais. Meus LACAIOS cuidarão de vocês! HO HO HO!',
+    'goomba/angry: HALT, HEROES!',
+    'goomba: I AM {r}SIR GOOMBA{w}! THE CAPED KNIGHT!',
+    'goomba: MOST LOYAL SERVANT OF THE GREAT {y}EMPEROR CARTMAN{w}!',
+    'kyle/annoyed: ...Is that a mushroom?',
+    "goomba/shock: I'M NOT A MUSHROOM! I'M A GOOMBA! IT'S COMPLETELY DIFFERENT!",
+    'goomba: I fell here from a faraway kingdom of mushrooms and green pipes. A plumber kept jumping on my head!',
+    'stan: Dude, that explains a lot.',
+    "goomba/happy: The Emperor promised that if I destroy you, he'll give me an {y}EVEN BIGGER CAPE{w}!",
+    'stan: You already have a cape.',
+    'goomba/angry: A {shake}BIGGER{shake} CAPE, I SAID!!',
+    "goomba: But today I'm far too busy. My MINIONS will deal with you! HO HO HO!",
   ]);
   Sfx.play('jump');
   await Cut.walk(gb, 840, 104, 4);
@@ -5474,7 +5496,7 @@ async function goombaIntro() {
 }
 
 ROOMS.campo3 = {
-  name: 'Encruzilhada dos Botões', tileset: 'dark', dark: true, music: 'field',
+  name: 'Button Crossroads', tileset: 'dark', dark: true, music: 'field',
   map: carve(48, 15, [['.', 0, 4, 47, 8], [',', 0, 5, 47, 7], ['.', 5, 2, 14, 3], ['.', 31, 2, 40, 3], ['.', 6, 9, 15, 10], ['.', 31, 9, 40, 10]]),
   bg: (g, cx, cy) => darkBg(g, cx, cy, { seed: 5 }),
   under(g, cx, cy) {
@@ -5485,7 +5507,7 @@ ROOMS.campo3 = {
     { type: 'prop', name: 'tent', x: 152, y: 60, solid: [56, 8], name_: 'tent', area: { x: -14, y: -10, w: 28, h: 16 }, interact: () => Shop.open() },
     { type: 'save', x: 60, y: 100 },
     treeObj(...T(6, 2)), treeObj(...T(13, 10)), treeObj(...T(39, 3)), treeObj(...T(32, 10)),
-    { type: 'sign', x: 232, y: 76, text: ['* "PARA PASSAR, PISE NOS BOTÕES NA ORDEM DO QUE O IMPERADOR MAIS AMA:"', '* "PRIMEIRO, {y}COMIDA{w}. DEPOIS, {y}DINHEIRO{w}. E POR ÚLTIMO... {y}ELE MESMO{w}."'] },
+    { type: 'sign', x: 232, y: 76, text: ['* "TO PASS, STEP ON THE BUTTONS IN THE ORDER OF WHAT THE EMPEROR LOVES MOST:"', '* "FIRST, {y}FOOD{w}. THEN, {y}MONEY{w}. AND LAST BUT NOT LEAST... {y}HIMSELF{w}."'] },
     { type: 'switch', id: 'food', x: 280, y: 80, interact: () => pressSwitch('food') },
     { type: 'switch', id: 'money', x: 328, y: 144, interact: () => pressSwitch('money') },
     { type: 'switch', id: 'crown', x: 376, y: 80, interact: () => pressSwitch('crown') },
@@ -5507,10 +5529,10 @@ const PUZ_ICON = {
 async function goombaTaunt() {
   const gb = World.find('goomba');
   if (!gb) return;
-  await Dlg.say(['goomba/happy: HO HO HO! Vocês nunca vão resolver o MEU quebra-cabeça!', 'goomba: Eu levei TRÊS DIAS pra fazer! E ainda não sei a resposta!']);
+  await Dlg.say(["goomba/happy: HO HO HO! You'll never solve MY puzzle!", "goomba: It took me THREE DAYS to make! And I still don't know the answer!"]);
 }
 async function pressSwitch(id) {
-  if (hasFlag('puzzle1')) { await Dlg.say(['* (O botão já está afundado.)']); return; }
+  if (hasFlag('puzzle1')) { await Dlg.say(['* (The button is already pressed down.)']); return; }
   const order = ['food', 'money', 'crown'];
   const pressed = order.filter((o) => hasFlag('sw_' + o));
   if (hasFlag('sw_' + id)) return;
@@ -5519,33 +5541,33 @@ async function pressSwitch(id) {
     if (pressed.length === 2) {
       await wait(10);
       Sfx.play('save'); setFlag('puzzle1'); Shake.start(1, 10);
-      await Dlg.say(['* (Os espinhos afundaram no chão!)']);
+      await Dlg.say(['* (The spikes sank into the ground!)']);
       await goombaFight1();
     }
   } else {
     Sfx.play('error');
     for (const o of order) G.flags['sw_' + o] = false;
-    await Dlg.say(['* (Bzzzt! Os botões voltaram ao lugar.)']);
-    if (World.find('goomba')) await Dlg.say(['goomba/happy: HO HO HO! Errado!']);
+    await Dlg.say(['* (Bzzzt! The buttons popped back up.)']);
+    if (World.find('goomba')) await Dlg.say(['goomba/happy: HO HO HO! WRONG!']);
   }
 }
 async function goombaFight1() {
   const gb = World.find('goomba');
   if (!gb || hasFlag('goomba_fight1')) return;
   Music.play('goomba');
-  await Dlg.say(['goomba/shock: O QUÊ?! Vocês resolveram?!', 'goomba/angry: Isso não estava nos planos! Então eu mesmo vou cuidar de vocês! EM GUARDA!']);
+  await Dlg.say(['goomba/shock: WHAT?! You solved it?!', "goomba/angry: That was NOT part of the plan! Fine, I'll handle you myself! EN GARDE!"]);
   const res = await Battle.start({
     enemies: ['goomba1'], music: 'goomba', money: 40, retryAt: [360, 104],
     endCheck: (B) => { const e = B.enemies[0]; return (e.hp <= e.maxHp * 0.45 || e.mercy >= 100 || B.turn > 6) && !B.choosing ? 'goomba_flee' : null; },
     onEnd: async (B, r) => {
       if (r !== 'goomba_flee') return;
       const e = B.enemies[0];
-      await enemySays(B, e, 'Argh! VOCÊS VENCERAM... DESTA VEZ!');
-      await enemySays(B, e, 'Isso não vai ficar assim! HO HO HO!');
+      await enemySays(B, e, 'Argh! YOU WIN... THIS TIME!');
+      await enemySays(B, e, "This isn't over! HO HO HO!");
       Sfx.play('flee');
       await tween(e, { fleeX: 200, alpha: 0 }, 20, Ease.in);
       G.money += 40;
-      await B.say('* Goomba fugiu!\n* Ganhou 0 XP e 40 D$.');
+      await B.say('* Sir Goomba ran away!\n* Got 0 EXP and 40 D$.');
     },
   });
   if (res === 'lose') return;
@@ -5555,7 +5577,7 @@ async function goombaFight1() {
 }
 
 ROOMS.bosque = {
-  name: 'Bosque dos Salgadinhos', tileset: 'dark', dark: true, music: 'field',
+  name: 'Snack Forest', tileset: 'dark', dark: true, music: 'field',
   map: carve(44, 15, [['.', 0, 4, 43, 8], [',', 0, 6, 43, 6], ['.', 8, 2, 16, 3], ['.', 20, 9, 30, 11], ['.', 28, 2, 40, 3], ['.', 30, 3, 43, 11]]),
   bg: (g, cx, cy) => darkBg(g, cx, cy, { seed: 6, alpha: 0.6 }),
   objects: () => {
@@ -5577,40 +5599,43 @@ async function mbpScene() {
   if (mbp) { mbp.state = 'frozen'; }
   if (!hasFlag('mbp_seen')) {
     setFlag('mbp_seen');
-    await Dlg.say(['* (Algo ENORME se mexe entre as árvores...)']);
+    await Dlg.say(['* (Something HUGE is moving between the trees...)']);
     if (mbp) await Cut.walk(mbp, 560, 112, 2);
     Sfx.play('growl');
     await Dlg.say([
-      'kyle/shock: O que é ISSO?!',
-      'kenny/worried: Mmph mmph mmph! (É o MANBEARPIG! Meio homem, meio urso, meio porco!)',
-      'stan: Isso dá um e meio...',
-      'kyle/angry: Não é hora pra matemática, Stan!',
+      'kyle/shock: What is THAT?!',
+      "kenny/worried: Mmph mmph mmph! (It's MANBEARPIG! Half man, half bear, half pig!)",
+      "stan: That's like one and a half...",
+      "kyle/angry: This isn't the time for math, Stan!",
     ]);
-  } else await Dlg.say(['kyle/worried: Ele voltou! Cuidado, gente!']);
+  } else await Dlg.say(["kyle/worried: It's back! Careful, guys!"]);
   const res = await Battle.start({ enemies: ['mbp'], music: 'mbp', positions: [[244, 140]], retryAt: [430, 104] });
   if (res === 'lose') return;
   const spared = res === 'win' && Battle.enemies[0].gone === 'spared';
   if (mbp) World.remove(mbp);
   setFlag('mbp_done');
-  await Dlg.say(spared ? ['* (O ManBearPig voltou para a floresta, mais calmo.)', 'kyle/happy: Acho que ninguém nunca tinha levado ele a sério.'] : ['* (O ManBearPig fugiu, meio humilhado.)', 'kyle: Ainda bem que acabou.']);
+  await Dlg.say(spared
+    ? ['* (ManBearPig went back into the forest, much calmer.)', 'kyle/happy: I guess nobody ever took him seriously before.', "stan: Dude, Al Gore is never gonna let us hear the end of this."]
+    : ['* (ManBearPig ran away, kind of humiliated.)', "kyle: Glad that's over.", "stan: Dude, Al Gore is never gonna let us hear the end of this."]);
   Music.play('field', { fadeIn: 20 });
 }
 
 ROOMS.portao = {
-  name: 'Portões da Cartmanlândia', tileset: 'dark', dark: true, music: 'castle',
+  name: 'Cartmanland Gates', tileset: 'dark', dark: true, music: 'castle',
   map: carve(30, 15, [['.', 0, 6, 29, 12], [',', 12, 4, 17, 12], ['.', 0, 13, 29, 13]]),
   bg: (g, cx, cy) => { darkBg(g, cx, cy, { seed: 7, land: false }); BG.cartmanland(g, cx - 120, cy, 1); },
   fg(g, cx, cy) {
     const on = Math.floor(frame / 20) % 2 === 0;
     g.fillStyle = '#1a0a2a'; g.fillRect(Math.round(184 - cx), Math.round(4 - cy), 112, 17);
     g.fillStyle = on ? '#ff5ad8' : '#ffd040'; g.fillRect(Math.round(184 - cx), Math.round(4 - cy), 112, 1); g.fillRect(Math.round(184 - cx), Math.round(20 - cy), 112, 1);
-    Font.draw(g, 'CARTMANLÂNDIA', 240 - cx, 3 - cy, on ? '#ff5ad8' : '#ffd040', { align: 'center' });
+    Font.draw(g, 'CARTMANLAND', 240 - cx, 3 - cy, on ? '#ff5ad8' : '#ffd040', { align: 'center' });
   },
   objects: () => [
     { type: 'prop', name: hasFlag('gate_open') ? 'gateOpen' : 'gate', x: 240, y: 70, solid: null, name_: 'gate' },
     { type: 'prop', name: 'pillar', x: 176, y: 100, solid: [18, 8] }, { type: 'prop', name: 'pillar', x: 304, y: 100, solid: [18, 8] },
     { type: 'prop', name: 'lamp', x: 150, y: 120, solid: [4, 4] }, { type: 'prop', name: 'lamp', x: 330, y: 120, solid: [4, 4] },
     { type: 'save', x: 72, y: 150 },
+    { type: 'sign', x: 112, y: 148, text: ['* "CARTMANLAND! THE GREATEST THEME PARK IN THE WHOLE DARK WORLD!"', '* "ADMISSION: FREE!"', '* "...BUT YOU CAN\'T COME."'] },
     { type: 'enemy', id: 'p1', group: ['peru', 'clyde'], x: 400, y: 170 },
     { type: 'goomba', kind: 'goomba', x: 240, y: 92, facing: 'down', name_: 'goomba', bw: 18, cond: () => !hasFlag('gate_open'), talk: () => gateScene() },
     { type: 'trigger', x: 180, y: 100, w: 120, h: 10, once: 'gate_talk', cond2: () => !hasFlag('gate_open'), run: () => gateScene() },
@@ -5625,19 +5650,20 @@ async function gateScene() {
   const gb = World.find('goomba');
   Music.play('goomba');
   await Dlg.say([
-    'goomba/angry: PAREM AÍ! Ninguém entra no castelo sem a {y}SENHA{w}!',
-    'kyle/annoyed: ...E qual é a senha?',
-    'goomba: Eu não posso contar! É SECRETA!',
-    'goomba/happy: Mas é uma frase que TODO MUNDO sabe que é verdade!',
+    'goomba/angry: STOP RIGHT THERE! Nobody enters the castle without the {y}PASSWORD{w}!',
+    "kyle/annoyed: ...And what's the password?",
+    "goomba: I can't tell you! It's a SECRET!",
+    "goomba/happy: But it's something EVERYBODY knows is true!",
   ]);
   for (;;) {
-    const i = await Dlg.ask('goomba: Então? Qual é a senha?', ['Cartman é legal', 'Cartman é gordo', 'Respeitem a autoridade']);
+    const i = await Dlg.ask('goomba: Finish it! "Cartman is..."', ['COOL', 'FAT', 'IN CHARGE', 'BIG-BONED']);
     if (i === 1) {
-      await Dlg.say(['goomba/happy: ...CORRETO! Podem passar.', 'goomba/shock: Opa. Eu não devia ter deixado vocês passarem, né?', 'goomba/angry: B-bom! A gente se vê na SALA DO TRONO! HO HO HO!']);
+      await Dlg.say(['goomba/happy: ...CORRECT! You may pass.', "goomba/shock: Oops. I wasn't supposed to let you in, was I?", 'goomba/angry: W-well! See you in the THRONE ROOM! HO HO HO!']);
       break;
     }
-    if (i === 0) await Dlg.say(['goomba/happy: HA! Ninguém acredita nisso. Nem o próprio Imperador.']);
-    else await Dlg.say(['goomba: Quase! Mas não. Isso é o que ele GRITA, não o que é verdade.']);
+    if (i === 0) await Dlg.say(['goomba/happy: HA! Nobody believes that. Not even the Emperor.']);
+    else if (i === 2) await Dlg.say(["goomba: Close! But no. That's what he YELLS, not what's TRUE."]);
+    else await Dlg.say(["goomba: That's what his MOM says."]);
   }
   Sfx.play('jump');
   await Cut.walk(gb, 240, 70, 3);
@@ -5646,20 +5672,20 @@ async function gateScene() {
   setFlag('gate_open');
   const gate = World.find('gate'); if (gate) gate.name = 'gateOpen';
   Shake.start(2, 16); Sfx.play('rumble');
-  await Dlg.say(['* (Os portões da Cartmanlândia se abriram com um rangido.)']);
+  await Dlg.say(['* (The gates of Cartmanland creaked open.)']);
   Music.play('castle', { fadeIn: 20 });
 }
 PROPS.gateOpen = (p) => { PROPS.gate(p); p.rect(12, 30, 48, 42, '#140a20'); p.rect(12, 30, 6, 42, '#5a2a1c'); p.rect(54, 30, 6, 42, '#5a2a1c'); };
 PROP_SIZE.gateOpen = [72, 72];
 
 ROOMS.salao = {
-  name: 'Castelo - Grande Salão', tileset: 'castle', dark: true, music: 'castle',
+  name: 'Castle - Great Hall', tileset: 'castle', dark: true, music: 'castle',
   map: carve(20, 26, [['W', 0, 0, 19, 0], ['w', 1, 1, 18, 3], ['c', 4, 4, 15, 24], ['=', 8, 4, 11, 24], ['c', 2, 10, 17, 14]]),
   objects: () => {
     const o = [];
     for (const y of [120, 200, 280, 360]) { o.push({ type: 'prop', name: 'pillar', x: 74, y, solid: [16, 8] }); o.push({ type: 'prop', name: 'pillar', x: 246, y, solid: [16, 8] }); }
     for (const x of [40, 88, 232, 280]) o.push({ type: 'prop', name: 'banner', x, y: 50, solid: null, z: -1 });
-    o.push({ type: 'save', x: 104, y: 92, text: ['* (O cheiro de frango frito enche o salão.)', '* (Isso te enche de DETERMINAÇÃO.)'] });
+    o.push({ type: 'save', x: 104, y: 92, text: ['* (The smell of extra crispy fried chicken fills the hall.)', '* (It fills you with DETERMINATION.)'] });
     o.push({ type: 'chest', id: 'c5', item: 'bala', x: 224, y: 196 });
     o.push({ type: 'trigger', x: 64, y: 236, w: 192, h: 10, once: 'chandelier', run: () => chandelierScene() });
     o.push({ type: 'exit', x: 144, y: 60, w: 32, h: 12, to: 'trono', tx: 160, ty: 214, facing: 'up' });
@@ -5691,7 +5717,9 @@ async function chandelierScene() {
   Sfx.play('splat'); Shake.start(4, 14);
   kenny.visible = false;
   await wait(20);
-  await Dlg.say(['stan/shock: AH, MEU DEUS! ELES MATARAM O KENNY!', 'kyle/angry: SEUS DESGRAÇADOS!']);
+  await Dlg.say(['stan/shock: OH MY GOD! THEY KILLED KENNY!', 'kyle/angry: YOU BASTARDS!']);
+  await wait(16);
+  await Dlg.say(['stan: ...Wait. Who\'s "they"? It was a chandelier.', 'kyle/annoyed: Dude. Just let me have this.']);
   await wait(30);
   await Dlg.say(['* ...']);
   room.chY = null; room.chX = 160;
@@ -5699,11 +5727,11 @@ async function chandelierScene() {
   kenny.x = 160; kenny.y = 400; kenny.visible = true;
   Sfx.play('revive');
   await Cut.walk(kenny, World.player.x, World.player.y + 30, 2.5);
-  await Dlg.say(['kenny/annoyed: Mmph. (Já voltei.)', 'kyle: ...Ok. Vamos em frente.']);
+  await Dlg.say(["kenny/annoyed: Mmph. (I'm back.)", "kyle: ...Okay. Let's keep going."]);
 }
 
 ROOMS.trono = {
-  name: 'Castelo - Sala do Trono', tileset: 'castle', dark: true, music: 'castle',
+  name: 'Castle - Throne Room', tileset: 'castle', dark: true, music: 'castle',
   map: carve(20, 15, [['W', 0, 0, 19, 0], ['w', 0, 1, 19, 3], ['c', 2, 4, 17, 13], ['=', 8, 4, 11, 13]]),
   objects: () => [
     { type: 'prop', name: 'throne', x: 160, y: 98, solid: [40, 10] },
@@ -5723,26 +5751,27 @@ async function bossScene() {
   if (!hasFlag('boss_intro')) {
     setFlag('boss_intro');
     await Dlg.say([
-      'cartman/smug: Ah. Finalmente. Stan. Kyle.',
-      'cartman/surprised: ...Kenny? Você não tinha morrido?',
-      'kenny/annoyed: Mmph. (Morri.)',
-      'cartman/happy: Bem-vindos à {y}CARTMANLÂNDIA SOMBRIA{w}! O MEU reino!',
-      'cartman/smug: Aqui todo mundo faz o que eu mando. Todo mundo RESPEITA A MINHA AUTORIDADE!',
-      'kyle/angry: Cartman, você tem que fechar essa fonte! A escuridão vai engolir a cidade inteira!',
-      'cartman/smug: Eu gosto do escuro, Kyle. No escuro ninguém vê quando eu como o último Cheesy Poof.',
-      'stan: Cartman, a gente só quer ir pra casa.',
-      'cartman/angry: Então vocês vão ter que passar por MIM... e pelo meu fiel cavaleiro!',
-      'goomba/happy: HO HO HO! SIR GOOMBA, ÀS SUAS ORDENS, MAJESTADE!',
-      'cartman/angry: Goomba! ATAQUE!',
-      'goomba: Mas... e a capa maior que o senhor me prometeu?',
-      'cartman/grit: DEPOIS, Goomba! {shake}ATAQUE!{shake}',
+      'cartman/smug: Ah. Finally. Stan. Kahl.',
+      "cartman/surprised: ...Kenny? Weren't you dead?",
+      'kenny/annoyed: Mmph. (I was.)',
+      'cartman/happy: Welcome to {y}DARK CARTMANLAND{w}! MY kingdom!',
+      'cartman/smug: Down here, everybody does what I say. Everybody RESPECTS MY AUTHORITAH!',
+      'kyle/angry: Cartman, you have to seal that fountain! The darkness is gonna swallow the whole town!',
+      'cartman/smug: Whatever, whatever! I do what I want!',
+      'cartman/smug: Besides, I like the dark, Kahl. In the dark, nobody sees me eat the last Cheesy Poof.',
+      'stan: Cartman, we just wanna go home.',
+      "cartman/angry: Then you'll have to get through ME... and my loyal knight!",
+      'goomba/happy: HO HO HO! SIR GOOMBA, AT YOUR SERVICE, YOUR MAJESTY!',
+      'cartman/angry: Goomba! ATTACK!',
+      'goomba: But... what about the bigger cape you promised me?',
+      'cartman/grit: LATER, Goomba! {shake}ATTACK!{shake}',
     ]);
   } else {
-    await Dlg.say(['cartman/smug: Voltaram pra apanhar de novo? RESPEITEM MINHA AUTORIDADE!', 'goomba/angry: HO HO HO! Em guarda!']);
+    await Dlg.say(['cartman/smug: Back for more? RESPECT MY AUTHORITAH!', 'goomba/angry: HO HO HO! En garde!']);
   }
   const res = await Battle.start({
     enemies: ['cartman', 'goomba'], music: 'boss', positions: [[272, 132], [228, 160]], money: 0, retryAt: [160, 214],
-    intro: '* O Imperador Cartman e Sir Goomba bloqueiam o caminho!',
+    intro: '* Emperor Cartman and Sir Goomba block the way!',
     noVictoryText: true,
     onEnd: async (B, r) => {
       if (r !== 'win') return;
@@ -5751,8 +5780,8 @@ async function bossScene() {
       const goom = B.enemies.find((e) => e.id === 'goomba');
       G.flags.goomba_spared = goom.gone === 'spared';
       c.alpha = 1; c.spareFade = false; c.fleeX = 0; c.data.cry = !G.flags.boss_spared;
-      await enemySays(B, c, G.flags.boss_spared ? 'Tá bom... TÁ BOM. Vocês venceram.' : 'AAAAI! Tá bom! TÁ BOM! VOCÊS VENCERAM!');
-      await B.say('* VOCÊ VENCEU!\n* Ganhou 0 XP e 0 D$.\n* (O Imperador não tinha dinheiro. Ele gastou tudo em salgadinho.)');
+      await enemySays(B, c, G.flags.boss_spared ? 'Fine... FINE. You guys win.' : 'OWWW! Fine! FINE! YOU GUYS WIN!');
+      await B.say('* YOU WON!\n* Got 0 EXP and 0 D$.\n* (The Emperor had no money. He spent it all on snacks.)');
     },
   });
   if (res === 'lose') return;
@@ -5762,34 +5791,34 @@ async function bossScene() {
 async function afterBoss(cart) {
   Music.play('tension');
   await Dlg.say([
-    'cartman/sad: Danem-se vocês. Eu vou pra casa!',
+    "cartman/sad: Screw you guys... I'm going home!",
   ]);
   await Cut.walk(cart, 120, 140, 2);
   await Dlg.say([
-    'kyle/angry: Você NÃO pode ir pra casa, Cartman! A fonte ainda tá aberta!',
-    'cartman/surprised: ...Ah.',
+    "kyle/angry: You CAN'T go home, Cartman! The fountain is still open!",
+    'cartman/surprised: ...Oh.',
   ]);
   if (G.flags.goomba_spared) {
     await Dlg.say([
-      'goomba/sad: Majestade... e a minha capa maior?',
-      'cartman/annoyed: Não existe capa maior, Goomba. Nunca existiu.',
+      'goomba/sad: Your Majesty... what about my bigger cape?',
+      'cartman/annoyed: There is no bigger cape, Goomba. There never was.',
       'goomba/sad: ...',
-      'kyle/angry: Você é horrível, Cartman.',
-      'stan: Goomba... sua capa já é bem legal do jeito que é.',
-      'goomba/happy: ...Você acha mesmo?! HO HO... ho.',
+      "kyle/angry: You're a horrible person, Cartman.",
+      "stan: Goomba... your cape is already pretty sweet the way it is.",
+      'goomba/happy: ...You really think so?! HO HO... ho.',
     ]);
   } else {
-    await Dlg.say(['goomba/sad: (Sir Goomba está sentado num canto, pensando na vida.)']);
+    await Dlg.say(['goomba/sad: (Sir Goomba is sitting in a corner, rethinking his life choices.)']);
   }
   await Dlg.say([
-    'kenny/worried: Mmph mmph! (Gente! A fonte fica atrás do trono!)',
-    'cartman/annoyed: Tá, tá. Vamos lá. Mas eu NÃO vou ajudar.',
+    'kenny/worried: Mmph mmph! (Guys! The fountain is behind the throne!)',
+    "cartman/annoyed: Fine, fine. Let's go. But I'm NOT helping.",
   ]);
   await World.go('fonte', 160, 200, 'up', 16);
 }
 
 ROOMS.fonte = {
-  name: 'A Fonte Sombria', tileset: 'dark', dark: true, music: 'fountain',
+  name: 'The Dark Fountain', tileset: 'dark', dark: true, music: 'fountain',
   map: carve(20, 15, [['.', 4, 3, 15, 13], ['.', 3, 5, 16, 11], [',', 9, 8, 10, 13]]),
   bg(g, cx, cy) {
     const gr = g.createRadialGradient(160 - cx, 90 - cy, 10, 160 - cx, 90 - cy, 200);
@@ -5808,11 +5837,11 @@ ROOMS.fonte = {
     const cart = World.addObject(kidObj('cartman', 200, 206, 'up', { name_: 'cartman', bw: 22 }));
     await Cut.walkAll([[p, 160, 170], [kyle, 132, 178], [kenny, 188, 178], [cart, 214, 196]]);
     await Dlg.say([
-      'kenny: Mmph. (Essa é a {pu}FONTE SOMBRIA{w}.)',
-      'kenny/worried: Mmph mmph. (Só quem tem uma {r}ALMA{w} de verdade pode fechar ela. Um herói do Mundo da Luz.)',
-      'cartman/smug: Bom, então tá explicado por que o Kenny não pode. Ele nem tá vivo.',
+      'kenny: Mmph. (This is the {pu}DARK FOUNTAIN{w}.)',
+      'kenny/worried: Mmph mmph. (Only someone with a real {r}SOUL{w} can seal it. A hero from the Light World.)',
+      "cartman/smug: Well, that explains why Kenny can't do it. He's barely even alive.",
       'kenny/annoyed: Mmph.',
-      'kyle: Vai lá, Stan. Você consegue.',
+      'kyle: Go on, Stan. You can do this.',
     ]);
     await sealScene();
   },
@@ -5822,7 +5851,7 @@ async function sealScene() {
   const p = World.player;
   await Cut.walk(p, 160, 138, 1);
   p.facing = 'up';
-  await Dlg.say(['* (Você estende a mão em direção à escuridão...)']);
+  await Dlg.say(['* (You reach out toward the darkness...)']);
   Music.stop(30);
   Sfx.play('seal');
   await tween(Scenes, { fountainK: 0 }, 60, Ease.in);
@@ -5862,25 +5891,26 @@ async function endingBusStop() {
   const kenny = World.addObject(kidObj('kenny', 178, 170, 'down'));
   await wait(30);
   await Dlg.say([
-    'kyle: Sabe, Stan... eu aprendi uma coisa hoje.',
-    'kyle: Às vezes, o mundo mais escuro é aquele que a gente cria quando só pensa em si mesmo.',
-    'stan: É. E que um cogumelo de capa pode ser mais leal do que muito amigo por aí.',
-    'cartman/annoyed: Que lição idiota.',
-    'kenny/happy: Mmph mmph! (Pelo menos hoje eu não morri!)',
+    'kyle: You know, Stan... I learned something today.',
+    'kyle: Sometimes the darkest world is the one we make when we only think about ourselves.',
+    'stan: Yeah. And a mushroom in a cape can be more loyal than a lot of so-called friends.',
+    "cartman/annoyed: That's the lamest lesson ever.",
+    "kenny/happy: Mmph mmph! (At least I didn't die today!)",
   ]);
   await wait(20);
   Sfx.play('fall');
-  await Dlg.say(['* (Fiiiiiiiiuuuuuuu...)'], { pos: 'top' });
+  await Dlg.say(['* (Fwiiiiiiiiiiiiiiiioooo...)'], { pos: 'top' });
   const gb = World.addObject({ type: 'goomba', kind: 'goomba', x: kenny.x, y: -40, facing: 'down', name_: 'goomba', solid: false });
   await tween(gb, { y: kenny.y }, 18, Ease.in);
   Sfx.play('splat'); Shake.start(4, 12);
   kenny.visible = false;
   await wait(24);
   await Dlg.say([
-    'goomba/shock: ...Ops.',
-    'stan/shock: AH, MEU DEUS! ELES MATARAM O KENNY!',
-    'kyle/angry: SEUS DESGRAÇADOS!',
-    'goomba/worried: Eu só vim devolver a capa! Desculpa! HO... ho?',
+    'goomba/shock: ...Oops.',
+    'stan/shock: OH MY GOD! THEY KILLED KENNY!',
+    'kyle/angry: YOU BASTARDS!',
+    "goomba/worried: I just came through the closet to say goodbye! I didn't think about the landing! HO... ho?",
+    'cartman/happy: Hehehe. Sweet.',
   ]);
   await wait(20);
   Music.stop(30);
@@ -5932,12 +5962,13 @@ const Scenes = {
   /* A lenda contada pelo Kenny */
   async legend() {
     const steps = [
-      { img: 'fountain', text: 'QUANDO UM IMPERADOR GULOSO ABRIR A FONTE DA ESCURIDÃO...' },
-      { img: 'trio', text: '...TRÊS HERÓIS VIRÃO PARA FECHÁ-LA.' },
-      { img: 'stan', text: 'UM CAVALEIRO DE GORRO.' },
-      { img: 'kyle', text: 'UM MAGO DE CHAPÉU VERDE.' },
-      { img: 'kenny', text: 'E UM IMORTAL ENCAPUZADO.' },
-      { img: 'trio2', text: 'JUNTOS, ELES TRARÃO O EQUILÍBRIO DE VOLTA.' },
+      { img: 'fountain', text: 'WHEN A GREEDY EMPEROR OPENS THE FOUNTAIN OF DARKNESS...' },
+      { img: 'trio', text: '...THREE HEROES SHALL RISE TO SEAL IT.' },
+      { img: 'stan', text: 'A KNIGHT IN A BEANIE.' },
+      { img: 'kyle', text: 'A MAGE IN A GREEN HAT.' },
+      { img: 'kenny', text: 'AND A HOODED IMMORTAL.' },
+      { img: 'kenny', text: '(WHO WILL PROBABLY DIE A COUPLE OF TIMES.)' },
+      { img: 'trio2', text: 'TOGETHER, THEY SHALL BRING BALANCE BACK TO THE WORLD.' },
     ];
     Music.play('intro', { fadeIn: 20 });
     await Fade.out(14);
@@ -6012,7 +6043,7 @@ const Scenes = {
     const mack = World.addObject({ type: 'npc', kind: 'npc', who: 'mackey', x: 300, y: 140, facing: 'right', name_: 'mackey2' });
     await Cut.walk(mack, 360, 140, 1.5);
     await Dlg.say([
-      'mackey/surprised: Garotos?! O que vocês estão fazendo deitados no chão do armário, m\'kay?',
+      "mackey/surprised: Boys?! What are you doing lying on the floor of the supply closet, m'kay?",
     ]);
     const kids = {};
     lay.forEach(([who, x, y], i) => {
@@ -6023,11 +6054,13 @@ const Scenes = {
     Sfx.play('appear');
     await wait(16);
     await Dlg.say([
-      'cartman/annoyed: Eu tava... é... fazendo um trabalho da escola.',
-      'mackey: Um trabalho no armário de materiais, m\'kay?',
-      'cartman/smug: É um trabalho sobre... esfregões.',
-      'mackey: ...M\'kay. Vão pra casa, garotos. A aula acabou faz tempo.',
-      'kyle/surprised: Já é de tarde?!',
+      'cartman/annoyed: We were... uh... doing a school project.',
+      "mackey: A school project in the supply closet, m'kay?",
+      "cartman/smug: It's a project about... mops.",
+      "mackey: ...M'kay. Go home, boys. School ended hours ago, m'kay.",
+      "kyle/surprised: It's already afternoon?!",
+      'stan: Dude, we missed the whole day.',
+      'cartman/happy: Sweet.',
     ]);
     await Fade.out(30);
     World.load('ponto', 210, 170, 'down');
@@ -6043,14 +6076,15 @@ const Scenes = {
   async credits() {
     Music.play('ending');
     const lines = [
-      ['SOUTHRUNE', '#ffffff', 2], ['Capítulo 1: A Fonte do Imperador', '#ffff00'], [''],
-      ['Um jogo de fã sem fins lucrativos.'], [''],
-      ['Inspirado em DELTARUNE, de Toby Fox.'], ['South Park foi criado por'], ['Trey Parker e Matt Stone.'], ['Goomba é um personagem da Nintendo.'], [''],
-      ['ELENCO', '#ffff00'],
-      ['STAN ........ Cavaleiro de Gorro'], ['KYLE ........ Mago de Chapéu Verde'], ['KENNY ....... Imortal Encapuzado'], ['CARTMAN ..... o Imperador'], ['SIR GOOMBA .. Cavaleiro da Capa'],
-      ['BUTTERS ..... Lojista'], ['SR. MACKEY .. Orientador, m\'kay'], ['MANBEARPIG .. super cereal'], [''],
-      ['Roteiro, arte, música e código'], ['feitos com Claude (Anthropic).'], ['Texto em GNU Unifont.'], [''],
-      ['OBRIGADO POR JOGAR!', '#ff9a1f'],
+      ['SOUTHRUNE', '#ffffff', 2], ["Chapter 1: The Emperor's Fountain", '#ffff00'], [''],
+      ['A non-profit fan game.'], [''],
+      ['Inspired by DELTARUNE by Toby Fox.'], ['South Park was created by'], ['Trey Parker and Matt Stone.'], ['Goomba is a Nintendo character.'], [''],
+      ['CAST', '#ffff00'],
+      ['STAN ........ Beanie Knight'], ['KYLE ........ Green Hat Mage'], ['KENNY ....... Hooded Immortal'], ['CARTMAN ..... the Emperor'], ['SIR GOOMBA .. Caped Knight'],
+      ['BUTTERS ..... Shopkeeper'], ["MR. MACKEY .. Counselor, m'kay"], ['MANBEARPIG .. super cereal'], ['MR. HAT ..... himself'], [''],
+      ['Script, art, music and code'], ['made with Claude (Anthropic).'], ['Text in GNU Unifont.'], [''],
+      ['No Kennys were harmed in the'], ['making of this game.'], ["(Okay, that's a lie.)", '#a0a0b0'], [''],
+      ['THANKS FOR PLAYING!', '#ff9a1f'],
     ];
     const ys = [];
     let acc = 0;
@@ -6074,13 +6108,13 @@ const Scenes = {
       g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
       const a = Math.min(1, t / 40);
       g.globalAlpha = a;
-      Font.draw(g, '* Mais tarde, naquela noite...', W / 2, 60, '#ffffff', { align: 'center' });
+      Font.draw(g, '* Later that night...', W / 2, 60, '#ffffff', { align: 'center' });
       if (t > 80) {
         g.drawImage(Spr.prop('closetOpen'), 147, 100);
         if (Math.floor(t / 10) % 3 === 0) { g.fillStyle = '#8a4ac0'; g.fillRect(150, 141, 20, 2); }
-        if (t > 150) Font.draw(g, '* (A porta do armário rangeu sozinha.)', W / 2, 160, '#c0c0c0', { align: 'center' });
+        if (t > 150) Font.draw(g, '* (The closet door creaked open.)', W / 2, 160, '#c0c0c0', { align: 'center' });
       }
-      if (t > 230) Font.draw(g, 'CAPÍTULO 2: EM BREVE?', W / 2, 200, '#ffff00', { align: 'center' });
+      if (t > 230) Font.draw(g, 'CHAPTER 2: COMING SOON?', W / 2, 200, '#ffff00', { align: 'center' });
       g.globalAlpha = 1;
     }, 330, { skippable: true });
     await Fade.out(30);
@@ -6089,9 +6123,14 @@ const Scenes = {
   },
 };
 
-/* ---------- Prólogo (estilo "VOCÊ ESTÁ AÍ?") ---------- */
+/* ---------- Prólogo (estilo "ARE YOU THERE?") ---------- */
 const Intro = {
-  lines: ['ESTÁ ME OUVINDO?', 'ÓTIMO.', 'ESTA É UMA CIDADEZINHA TRANQUILA, LÁ NAS MONTANHAS.', 'ONDE NADA DE ESTRANHO ACONTECE.', '(QUASE NADA.)', 'MAS HOJE, DENTRO DE UM ARMÁRIO ESCURO...', 'UMA FONTE DE ESCURIDÃO SE ABRIU.', 'E ALGUÉM VAI PRECISAR FECHÁ-LA.'],
+  lines: [
+    'CAN YOU HEAR ME?', 'GOOD.',
+    'THIS IS A QUIET, LITTLE, PODUNK, JERKWATER, ONE-HORSE MOUNTAIN TOWN.',
+    'WHERE NOTHING STRANGE EVER HAPPENS.', '(OKAY. SOMETHING STRANGE HAPPENS HERE EVERY WEEK.)',
+    'BUT TODAY, INSIDE A DARK CLOSET...', 'A FOUNTAIN OF DARKNESS OPENED.', 'AND SOMEONE WILL HAVE TO SEAL IT.',
+  ],
   i: 0, t: 0, shown: 0,
   enter() { this.i = 0; this.t = 0; this.shown = 0; this.prep(); Music.play('intro'); Fade.a = 0; },
   prep() { this.wrapped = Font.wrap(Font.parse(this.lines[this.i]), 30); this.total = Font.count(this.wrapped); this.shown = 0; this.t = 0; },
@@ -6111,7 +6150,7 @@ const Intro = {
     g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
     const n = this.wrapped.length;
     Font.drawRich(g, this.wrapped, 160 - 15 * 8, 112 - n * 8, this.shown);
-    Mini.draw(g, 'C: PULAR', W - 6, H - 10, '#4a4a5a', { align: 'right' });
+    Mini.draw(g, 'C: SKIP', W - 6, H - 10, '#4a4a5a', { align: 'right' });
   },
 };
 
@@ -6120,7 +6159,7 @@ const Title = {
   idx: 0, t: 0, opts: [], conf: false,
   enter() {
     this.t = 0; this.idx = 0; this.conf = false;
-    this.opts = Save.exists() ? ['CONTINUAR', 'NOVO JOGO', 'CONFIG'] : ['COMEÇAR', 'CONFIG'];
+    this.opts = Save.exists() ? ['CONTINUE', 'NEW GAME', 'CONFIG'] : ['START', 'CONFIG'];
     Music.play('intro', { fadeIn: 30 });
     Fade.a = 1; Fade.in(30);
   },
@@ -6134,8 +6173,8 @@ const Title = {
       const o = this.opts[this.idx];
       Sfx.play('select');
       if (o === 'CONFIG') { this.conf = true; this.cidx = 0; return; }
-      if (o === 'CONTINUAR') Game.continueGame();
-      else if (o === 'NOVO JOGO') { this.confirmNew = true; Game.newGameFlow(); }
+      if (o === 'CONTINUE') Game.continueGame();
+      else if (o === 'NEW GAME') { this.confirmNew = true; Game.newGameFlow(); }
       else Game.newGameFlow();
     }
   },
@@ -6170,7 +6209,7 @@ const Title = {
     g.restore();
     Font.draw(g, 'SOUTHRUNE', cx + 2, cy - 18 + 2, '#3a1d5c', { align: 'center', scale: 3 });
     Font.draw(g, 'SOUTHRUNE', cx, cy - 18, '#ffffff', { align: 'center', scale: 3 });
-    Font.draw(g, 'CAPÍTULO 1: A FONTE DO IMPERADOR', cx, cy + 28, '#c0c0d0', { align: 'center' });
+    Font.draw(g, "CHAPTER 1: THE EMPEROR'S FOUNTAIN", cx, cy + 28, '#c0c0d0', { align: 'center' });
     void t;
   },
   draw(g) {
@@ -6197,16 +6236,16 @@ const Title = {
       Font.draw(g, o, W / 2, y, i === this.idx ? '#ffff00' : '#ffffff', { align: 'center' });
       if (i === this.idx) UI.heart(g, W / 2 - Font.width(o) / 2 - 14, y + 5);
     });
-    if (Save.exists() && this.opts[this.idx] === 'CONTINUAR') {
+    if (Save.exists() && this.opts[this.idx] === 'CONTINUE') {
       const s = Save.info();
       Mini.draw(g, `${(s.saveRoomName || '').toUpperCase().slice(0, 34)}  ${fmtTime(s.time || 0)}`, W / 2, 210, '#8a8aa0', { align: 'center' });
     }
-    Mini.draw(g, 'JOGO DE FÃ NÃO OFICIAL - INSPIRADO EM DELTARUNE', W / 2, H - 14, '#5a5a6a', { align: 'center' });
+    Mini.draw(g, 'UNOFFICIAL FAN GAME - INSPIRED BY DELTARUNE', W / 2, H - 14, '#5a5a6a', { align: 'center' });
   },
   drawConf(g) {
     UI.box(g, 40, 140, 240, 88, 'dark');
-    const touchLbl = ['AUTOMÁTICO', 'SEMPRE', 'NUNCA'][Game.conf.touch];
-    const rows = [['Volume geral', `< ${Math.round(Sfx.vol.master * 100)}% >`], ['Música', `< ${Math.round(Sfx.vol.music * 100)}% >`], ['Controles na tela', touchLbl], ['Voltar', '']];
+    const touchLbl = ['AUTO', 'ALWAYS', 'NEVER'][Game.conf.touch];
+    const rows = [['Master Volume', `< ${Math.round(Sfx.vol.master * 100)}% >`], ['Music', `< ${Math.round(Sfx.vol.music * 100)}% >`], ['Touch Controls', touchLbl], ['Return', '']];
     rows.forEach(([a, b], i) => {
       const y = 148 + i * 18;
       Font.draw(g, a, 66, y, i === this.cidx ? '#ffff00' : '#fff');
@@ -6223,9 +6262,9 @@ const Boot = {
   draw(g) {
     g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
     g.drawImage(ICON.soul, W / 2 - 4, 92 + Math.round(Math.sin(this.t * 0.08) * 2));
-    const msg = Touch.enabled ? 'TOQUE PARA COMEÇAR' : 'CLIQUE OU APERTE Z PARA COMEÇAR';
+    const msg = Touch.enabled ? 'TAP TO START' : 'CLICK OR PRESS Z TO START';
     if (Math.floor(this.t / 25) % 2 === 0) Font.draw(g, msg, W / 2, 118, '#ffffff', { align: 'center' });
-    Mini.draw(g, 'USE FONES DE OUVIDO PARA A MELHOR EXPERIÊNCIA', W / 2, 150, '#5a5a6a', { align: 'center' });
+    Mini.draw(g, 'HEADPHONES RECOMMENDED', W / 2, 150, '#5a5a6a', { align: 'center' });
   },
 };
 
@@ -6279,8 +6318,8 @@ const GameOver = {
       g.globalAlpha = 1;
     }
     if (this.phase === 4) {
-      Font.draw(g, 'CONTINUAR?', W / 2, 176, '#ffffff', { align: 'center' });
-      ['SIM', 'NÃO'].forEach((o, i) => {
+      Font.draw(g, 'CONTINUE?', W / 2, 176, '#ffffff', { align: 'center' });
+      ['YES', 'NO'].forEach((o, i) => {
         const x = W / 2 - 44 + i * 88;
         Font.draw(g, o, x, 198, i === this.idx ? '#ffff00' : '#ffffff', { align: 'center' });
         if (i === this.idx) UI.heart(g, x - 26, 203);
@@ -6289,8 +6328,8 @@ const GameOver = {
     if (this.phase === 5) {
       const a = Math.min(1, this.t2 / 40);
       g.globalAlpha = a;
-      Font.draw(g, 'O MUNDO FOI COBERTO', W / 2, 100, '#ffffff', { align: 'center' });
-      Font.draw(g, 'PELA ESCURIDÃO...', W / 2, 120, '#ffffff', { align: 'center' });
+      Font.draw(g, 'THE WORLD WAS COVERED', W / 2, 100, '#ffffff', { align: 'center' });
+      Font.draw(g, 'IN DARKNESS...', W / 2, 120, '#ffffff', { align: 'center' });
       g.globalAlpha = 1;
     }
   },
@@ -6307,7 +6346,7 @@ const Shop = {
       Game.mode = 'shop';
       this.mode = 'menu'; this.idx = 0; this.t = 0; this.note = null;
       Music.play('shop');
-      this.setText(hasFlag('shop_met') ? '* Olá de novo, amigos! O que vão querer?' : '* Ah, olá, amigos! Bem-vindos à {y}Loja do Butters{w}!\n* Eu caí aqui ontem e resolvi abrir um negócio!');
+      this.setText(hasFlag('shop_met') ? "* Hiya again, fellas! Whaddya need?" : "* Oh, hiya, fellas! Welcome to {y}Butters' Shop{w}!\n* I fell down here yesterday, so I opened a business!");
       setFlag('shop_met');
     });
   },
@@ -6318,7 +6357,7 @@ const Shop = {
     Music.play(World.def.music);
     const r = this.resolve; this.resolve = null; if (r) r();
   },
-  back(text = '* Mais alguma coisa?') { this.mode = 'menu'; this.note = null; this.setText(text); },
+  back(text = '* Anything else, fellas?') { this.mode = 'menu'; this.note = null; this.setText(text); },
   update() {
     this.t++;
     if (this.note) this.note.t++;
@@ -6336,7 +6375,7 @@ const Shop = {
         Sfx.play('select');
         if (this.idx === 0) { this.mode = 'buy'; this.sel = 0; this.note = null; }
         else if (this.idx === 1) {
-          if (!G.items.length) { Sfx.play('error'); this.setText('* Você não tem nada pra vender, amigo.', 'sad'); }
+          if (!G.items.length) { Sfx.play('error'); this.setText("* Aw, salt... you don't have anything to sell, fella.", 'sad'); }
           else { this.mode = 'sell'; this.sel = 0; this.note = null; }
         } else if (this.idx === 2) { this.mode = 'talk'; this.sel = 0; }
         else this.bye();
@@ -6348,9 +6387,9 @@ const Shop = {
         if (!Input.take('confirm')) break;
         if (this.sel === SHOP_STOCK.length) { Sfx.play('cancel'); this.back(); break; }
         const id = SHOP_STOCK[this.sel], price = SHOP_PRICE[id];
-        if (G.money < price) { Sfx.play('error'); this.say('* Ah, puxa... falta dinheiro.', 'sad'); }
-        else if (G.items.length >= 12) { Sfx.play('error'); this.say('* Seus bolsos estão cheios!', 'worried'); }
-        else { G.money -= price; addItem(id); Sfx.play('item'); this.say(U.pick(['* Obrigado! Ah, hambúrgueres!', '* Valeu! Volte sempre!', '* Uau, um cliente de verdade!'])); }
+        if (G.money < price) { Sfx.play('error'); this.say('* Oh, hamburgers! Not enough money.', 'sad'); }
+        else if (G.items.length >= 12) { Sfx.play('error'); this.say('* Your pockets are full!', 'worried'); }
+        else { G.money -= price; addItem(id); Sfx.play('item'); this.say(U.pick(['* Thanks a bunch, fella!', '* Oh boy, a real customer!', '* Gee whiz, thanks!'])); }
         break;
       }
       case 'sell': {
@@ -6360,7 +6399,7 @@ const Shop = {
         if (!Input.take('confirm')) break;
         const id = G.items[this.sel], val = ITEMS[id].sell || 5;
         removeItemAt(this.sel); G.money += val; Sfx.play('item');
-        this.say(`* Fechado! Aqui estão ${val} D$.`);
+        this.say(`* Deal! Here's ${val} D$.`);
         this.sel = Math.max(0, Math.min(this.sel, G.items.length - 1));
         break;
       }
@@ -6381,14 +6420,15 @@ const Shop = {
       default: break;
     }
   },
-  bye() { this.mode = 'bye'; this.byeT = 0; this.note = null; this.setText('* Volte sempre! E... não conta pros meus pais, tá?'); },
+  bye() { this.mode = 'bye'; this.byeT = 0; this.note = null; this.setText("* Come back soon! And... don't tell my parents, okay? They'll ground me!"); },
   topics() {
     return [
-      { name: 'Sobre você', text: '* Eu caí aqui ontem procurando o meu hamster.\n* Se os meus pais souberem, eu vou ficar de CASTIGO!', expr: 'worried' },
-      { name: 'Mundo Sombrio', text: '* Aqui é tudo escuro e roxo... mas os salgadinhos falam!\n* Isso é bem legal, né?' },
-      { name: 'O Cartman', text: '* O Eric disse que agora é imperador.\n* Ele me fez assinar um contrato de "súdito leal". Eu nem sei o que é súdito.', expr: 'worried' },
-      { name: 'O Goomba', text: '* Ele é muito educado! Sempre pede "por favor" antes de gritar HO HO HO.' },
-      { name: 'Voltar', back: true },
+      { name: 'About you', text: "* I fell down here looking for my hamster.\n* If my parents find out, I'm gonna be SO grounded!", expr: 'worried' },
+      { name: 'Dark World', text: "* Everything's dark and purple down here... but the snacks can talk!\n* That's pretty neat, huh?" },
+      { name: 'Cartman', text: '* Eric says he\'s an emperor now.\n* He made me sign a "loyal servant" contract. I still have to pay HIM.', expr: 'worried' },
+      { name: 'Sir Goomba', text: '* He\'s real polite! He always says "please" before he yells HO HO HO.' },
+      { name: 'Prof. Chaos', text: '* Sometimes I dress up as {pu}PROFESSOR CHAOS{w} and plan to destroy the world!\n* ...After my homework.', expr: 'happy' },
+      { name: 'Back', back: true },
     ];
   },
   draw(g) {
@@ -6401,15 +6441,15 @@ const Shop = {
     const b = Spr.npc('butters', Math.floor(this.t / 30) % 2, this.expr);
     g.drawImage(b, 160 - b.width, 22, b.width * 2, b.height * 2);
     g.fillStyle = '#8a5a2c'; g.fillRect(60, 96, 200, 32); g.fillStyle = '#a06a34'; g.fillRect(60, 96, 200, 4);
-    Font.draw(g, 'LOJA DO BUTTERS', 160, 106, '#f6c832', { align: 'center', outline: '#3a2010' });
+    Font.draw(g, "BUTTERS' SHOP", 160, 106, '#f6c832', { align: 'center', outline: '#3a2010' });
     UI.box(g, 0, 128, 196, 112, 'dark');
     UI.box(g, 196, 128, 124, 112, 'dark');
-    if (this.mode === 'buy') this.drawList(g, SHOP_STOCK.map((id) => [ITEMS[id].name, `${SHOP_PRICE[id]}`]).concat([['Sair', '']]), this.sel);
+    if (this.mode === 'buy') this.drawList(g, SHOP_STOCK.map((id) => [ITEMS[id].name, `${SHOP_PRICE[id]}`]).concat([['Exit', '']]), this.sel);
     else if (this.mode === 'sell') this.drawList(g, G.items.map((id) => [ITEMS[id].name, `${ITEMS[id].sell || 5}`]), this.sel);
     else if (this.mode === 'talk') this.drawList(g, this.topics().map((t) => [t.name, '']), this.sel);
     else Font.drawRich(g, this.lines, 12, 138, this.shown);
     if (this.mode === 'menu' || this.mode === 'bye' || this.mode === 'talkText') {
-      ['COMPRAR', 'VENDER', 'CONVERSAR', 'SAIR'].forEach((o, i) => {
+      ['BUY', 'SELL', 'TALK', 'EXIT'].forEach((o, i) => {
         const on = i === this.idx && this.mode === 'menu';
         Font.draw(g, o, 222, 140 + i * 18, on ? '#ffff00' : '#ffffff');
         if (on) UI.heart(g, 208, 145 + i * 18);

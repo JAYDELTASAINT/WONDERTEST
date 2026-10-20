@@ -144,19 +144,19 @@ const World = {
         a = new Actor(Object.assign({ kind: 'save', bw: 12, bh: 8, area: { x: -12, y: -18, w: 24, h: 22 } }, o));
         a.interact = async () => {
           healAll();
-          await Dlg.say(o.text || ['* (Uma luz estranha brilha aqui.)', '* (Isso te enche de DETERMINAÇÃO.)']);
+          await Dlg.say(o.text || ['* (A strange light shines here.)', '* (It fills you with DETERMINATION.)']);
           await SaveMenu.open(this.def.name || '');
         };
         break;
       case 'chest':
         a = new Actor(Object.assign({ kind: 'chest', bw: 18, bh: 8, flag: 'chest_' + o.id }, o));
         a.interact = async () => {
-          if (hasFlag(a.flag)) { await Dlg.say('* (O baú está vazio.)'); return; }
-          if (G.items.length >= 12) { await Dlg.say('* (Seus bolsos estão cheios.)'); return; }
+          if (hasFlag(a.flag)) { await Dlg.say('* (The chest is empty.)'); return; }
+          if (G.items.length >= 12) { await Dlg.say('* (Your pockets are full.)'); return; }
           setFlag(a.flag); Sfx.play('item');
-          if (o.money) { G.money += o.money; await Dlg.say(`* (Dentro do baú havia ${o.money} D$.)`); return; }
+          if (o.money) { G.money += o.money; await Dlg.say(`* (Inside the chest was ${o.money} D$.)`); return; }
           addItem(o.item);
-          await Dlg.say(`* (Você abriu o baú.)\n* (Dentro havia: {y}${ITEMS[o.item].name}{w}.)`);
+          await Dlg.say(`* (You opened the chest.)\n* (Inside was: {y}${ITEMS[o.item].name}{w}.)`);
         };
         break;
       case 'sign':
@@ -480,6 +480,6 @@ const Cut = {
   async join(who) {
     if (!G.party.includes(who)) G.party.push(who);
     G.hp[who] = maxHp(who);
-    await Banner.show(`${MEMBERS[who].name} ENTROU PARA O GRUPO!`, MEMBERS[who].color);
+    await Banner.show(`${MEMBERS[who].name} JOINED THE PARTY!`, MEMBERS[who].color);
   },
 };

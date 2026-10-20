@@ -5,7 +5,7 @@
 
 const PANEL_Y = 168;
 const BOX_CX = 160, BOX_CY = 98;
-const BTN_LABEL = { fight: 'LUTAR', act: 'AGIR', magic: 'MAGIA', item: 'ITEM', spare: 'POUPAR', defend: 'DEFENDER' };
+const BTN_LABEL = { fight: 'FIGHT', act: 'ACT', magic: 'MAGIC', item: 'ITEM', spare: 'SPARE', defend: 'DEFEND' };
 const PARTY_POS = { 1: [[60, 122]], 2: [[66, 100], [50, 138]], 3: [[70, 86], [52, 118], [70, 150]] };
 const ENEMY_POS = { 1: [[240, 128]], 2: [[226, 98], [268, 146]], 3: [[218, 84], [270, 118], [226, 152]] };
 const ATTACK_COLORS = { stan: '#5ab4ff', kyle: '#5cdd5c', kenny: '#ffa232' };
@@ -61,7 +61,7 @@ const Battle = {
     for (const m of this.party) tween(m, { off: 0 }, 14, Ease.out);
     for (const e of this.enemies) tween(e, { off: 0 }, 14, Ease.out);
     await wait(14);
-    this.setText(this.cfg.intro || this.enemies[0].def.intro || `* ${this.enemies[0].name} bloqueia o caminho!`);
+    this.setText(this.cfg.intro || this.enemies[0].def.intro || `* ${this.enemies[0].name} blocks the way!`);
     if (this.cfg.onStart) await this.cfg.onStart(this);
     for (;;) {
       this.turn++;
@@ -142,13 +142,13 @@ const Battle = {
     const al = this.alive();
     if (this.cfg.flavor) { const f = this.cfg.flavor(this); if (f) return f; }
     const spare = al.find((e) => e.mercy >= 100);
-    if (spare && Math.random() < 0.6) return `* ${spare.name} não quer mais lutar.`;
+    if (spare && Math.random() < 0.6) return `* ${spare.name} doesn't want to fight anymore.`;
     const tired = al.find((e) => e.tired);
-    if (tired && Math.random() < 0.5) return `* ${tired.name} parece cansado.`;
+    if (tired && Math.random() < 0.5) return `* ${tired.name} looks {b}TIRED{w}.`;
     const e = U.pick(al);
     if (!e) return '* ...';
     const fl = e.def.flavor;
-    return typeof fl === 'function' ? fl(this, e) : U.pick(fl || [`* ${e.name} está aqui.`]);
+    return typeof fl === 'function' ? fl(this, e) : U.pick(fl || [`* ${e.name} is here.`]);
   },
   nextChooser(from) { for (let i = from + 1; i < this.party.length; i++) if (G.hp[this.party[i].id] > 0 && this.busyBy[i] === null) return i; return -1; },
   prevChooser(from) { for (let i = from - 1; i >= 0; i--) if (G.hp[this.party[i].id] > 0 && this.busyBy[i] === null) return i; return -1; },
@@ -272,7 +272,7 @@ const Battle = {
   },
   firstEnemyIdx() { const a = this.alive()[0]; return a ? this.enemies.indexOf(a) : 0; },
   actsFor(e) {
-    const list = [{ name: 'Checar', check: true, ok: true }];
+    const list = [{ name: 'Check', check: true, ok: true }];
     for (const a of e.def.acts || []) {
       if (a.cond && !a.cond(this, e)) continue;
       const ok = (a.req || []).every((id) => {
@@ -308,10 +308,10 @@ const Battle = {
       case 'spare': {
         const e = this.retarget(a.target); if (!e) return;
         this.pose(m, 'act', 20);
-        if (e.mercy >= 100 && (!e.def.canSpare || e.def.canSpare(this, e))) { await this.spareEnemy(e, `* ${cap} poupou ${e.name}!`); }
+        if (e.mercy >= 100 && (!e.def.canSpare || e.def.canSpare(this, e))) { await this.spareEnemy(e, `* ${cap} spared ${e.name}!`); }
         else {
           if (e.def.onSpareFail) await e.def.onSpareFail(this, e, m);
-          else await this.say(`* ${cap} poupou ${e.name}.\n* Mas o nome não estava {y}AMARELO{w}...`);
+          else await this.say(`* ${cap} spared ${e.name}.\n* But its name wasn't {y}YELLOW{w}...`);
         }
         return;
       }
@@ -330,13 +330,13 @@ const Battle = {
         this.pose(m, 'item', 24);
         if (it.all) {
           for (const pm of this.party) this.healMember(pm, it.heal);
-          await this.say(`* ${cap} usou ${it.name}!\n* O grupo recuperou ${it.heal} HP!`);
+          await this.say(`* ${cap} shared the ${it.name}!\n* Everyone recovered ${it.heal} HP!`);
         } else {
           const t = a.ally;
           if (it.revive && G.hp[t.id] <= 0) { G.hp[t.id] = 0; this.healMember(t, Math.round(maxHp(t.id) * it.revive)); }
           else this.healMember(t, it.heal);
-          const who = t === m ? '' : ` em ${MEMBERS[t.id].name[0] + MEMBERS[t.id].name.slice(1).toLowerCase()}`;
-          await this.say(`* ${cap} usou ${it.name}${who}!`);
+          const who = t === m ? '' : ` on ${MEMBERS[t.id].name[0] + MEMBERS[t.id].name.slice(1).toLowerCase()}`;
+          await this.say(`* ${cap} used the ${it.name}${who}!`);
         }
         return;
       }
@@ -361,7 +361,7 @@ const Battle = {
     switch (a.spell) {
       case 'furia': {
         const e = this.retarget(a.target); if (!e) break;
-        await this.say(`* Kyle gritou com toda a raiva e lançou a {g}FÚRIA VERDE{w}!`, { auto: 22 });
+        await this.say(`* Kyle went full Jersey!\n* {g}JERSEY RAGE{w}!`, { auto: 22 });
         Sfx.play('magic');
         this.fx.push({ type: 'beam', x0: m.x + 16, y0: m.y - 22, x1: e.x, y1: e.y - 24, t: 0, color: '#5cff6a' });
         await wait(14);
@@ -371,14 +371,14 @@ const Battle = {
         break;
       }
       case 'licao': {
-        await this.say('* Kyle subiu num caixote e fez um longo discurso sobre amizade e tolerância...', {});
+        await this.say('* Kyle stood on a crate.\n* "You know, I learned something today..."', {});
         for (const e of this.alive()) this.addMercy(e, 20);
-        await this.say('* Todos ficaram meio pensativos.');
+        await this.say('* Everyone feels a little thoughtful.');
         break;
       }
       case 'cura': {
         const t = a.ally;
-        await this.say(`* Kenny fez uma oração do além.\n* Mmmph mmph...`, { auto: 26 });
+        await this.say(`* Kenny prayed to a friend he made in Hell.\n* Mmmph mmph...`, { auto: 26 });
         this.healMember(t, stat('kenny', 'mag') * 6 + 24);
         await wait(16);
         break;
@@ -386,10 +386,10 @@ const Battle = {
       case 'pacificar': {
         const e = this.retarget(a.target); if (!e) break;
         if (e.tired && (!e.def.canSpare || e.def.canSpare(this, e))) {
-          await this.say(`* Kenny cantou uma canção de ninar abafada...`, { auto: 24 });
-          await this.spareEnemy(e, `* ${e.name} caiu no sono!`);
+          await this.say(`* Kenny sang a muffled lullaby...`, { auto: 24 });
+          await this.spareEnemy(e, `* ${e.name} fell asleep!`);
         } else {
-          await this.say(`* Kenny tentou acalmar ${e.name}...\n* Mas o inimigo não estava {b}CANSADO{w}.`);
+          await this.say(`* Kenny tried to calm ${e.name} down...\n* But it wasn't {b}TIRED{w}.`);
         }
         break;
       }
@@ -404,7 +404,7 @@ const Battle = {
     if (e.mercy !== before) this.popup(e.x, e.y - 44, `+${e.mercy - before}%`, '#ffff00', { mini: true });
     if (e.mercy >= 100 && before < 100) Sfx.play('spare');
   },
-  tire(e) { if (!e.gone && !e.tired) { e.tired = true; this.popup(e.x, e.y - 62, 'CANSADO', '#5ad2ff', { mini: true }); } },
+  tire(e) { if (!e.gone && !e.tired) { e.tired = true; this.popup(e.x, e.y - 62, 'TIRED', '#5ad2ff', { mini: true }); } },
 
   /* ---------- minigame de ataque ---------- */
   async runQTE(fighters) {
@@ -440,7 +440,7 @@ const Battle = {
     const a = this.acts[r.pi];
     const e = this.retarget(a.target);
     if (!e) return;
-    if (mult <= 0) { this.popup(e.x, e.y - 30, 'ERROU', '#9a9a9a'); Sfx.play('miss'); return; }
+    if (mult <= 0) { this.popup(e.x, e.y - 30, 'MISS', '#9a9a9a'); Sfx.play('miss'); return; }
     (async () => {
       this.pose(m, 'attack'); m.animF = 0;
       Sfx.play('swing');
@@ -623,7 +623,7 @@ const Battle = {
     G.hp[m.id] = Math.min(G.hp[m.id], -Math.round(maxHp(m.id) * 0.25));
     this.pose(m, 'down');
     Sfx.play('down');
-    this.popup(m.x + 6, m.y - 46, 'CAÍDO', '#ff4040', { mini: true });
+    this.popup(m.x + 6, m.y - 46, 'DOWN', '#ff4040', { mini: true });
     if (m.id === 'kenny') { this.kennyDied = true; Sfx.play('splat'); }
   },
   async endTurn() {
@@ -631,21 +631,21 @@ const Battle = {
       this.kennyDied = false;
       const stan = this.member('stan'), kyle = this.member('kyle');
       const bubbles = [];
-      if (stan && G.hp.stan > 0) bubbles.push(this.makeBubble(stan.x + 18, stan.y - 40, 'MEU DEUS! ELES MATARAM O KENNY!', 'right', 'stan'));
-      if (kyle && G.hp.kyle > 0) bubbles.push(this.makeBubble(kyle.x + 18, kyle.y - 26, 'SEUS DESGRAÇADOS!', 'right', 'kyle'));
+      if (stan && G.hp.stan > 0) bubbles.push(this.makeBubble(stan.x + 18, stan.y - 40, 'OH MY GOD! THEY KILLED KENNY!', 'right', 'stan'));
+      if (kyle && G.hp.kyle > 0) bubbles.push(this.makeBubble(kyle.x + 18, kyle.y - 26, 'YOU BASTARDS!', 'right', 'kyle'));
       if (bubbles.length) await this.showBubbles(bubbles, { auto: 80 });
       const k = this.member('kenny');
       if (k && G.hp.kenny <= 0) {
         G.hp.kenny = Math.round(maxHp('kenny') * 0.5);
         this.pose(k, 'idle'); Sfx.play('revive');
         this.fx.push({ type: 'heal', x: k.x, y: k.y - 18, t: 0 });
-        await this.say('* Kenny voltou à vida.\n* Ninguém sabe explicar como.', { auto: 60 });
+        await this.say('* Kenny came back to life.\n* Nobody knows how. Nobody asks.', { auto: 60 });
       }
     }
     for (const m of this.party) {
       if (G.hp[m.id] <= 0) {
         G.hp[m.id] += Math.ceil(maxHp(m.id) / 8);
-        if (G.hp[m.id] > 0) { this.pose(m, 'idle'); this.popup(m.x + 6, m.y - 40, 'DE PÉ', '#3cff4c', { mini: true }); Sfx.play('revive'); }
+        if (G.hp[m.id] > 0) { this.pose(m, 'idle'); this.popup(m.x + 6, m.y - 40, 'UP', '#3cff4c', { mini: true }); Sfx.play('revive'); }
       } else if (m.pose !== 'idle') this.pose(m, 'idle');
       m.defending = false;
     }
@@ -667,7 +667,7 @@ const Battle = {
       Music.stop(4);
       Sfx.play('victory');
       for (const m of this.party) if (G.hp[m.id] > 0) this.pose(m, 'victory');
-      if (!this.cfg.noVictoryText) await this.say(`* VOCÊ VENCEU!\n* Ganhou 0 XP e ${money} D$.`);
+      if (!this.cfg.noVictoryText) await this.say(`* YOU WON!\n* Got 0 EXP and ${money} D$.`);
     }
     if (this.cfg.onEnd) await this.cfg.onEnd(this, result);
     return result;
@@ -842,7 +842,7 @@ const Battle = {
           const icon = { fight: 'fight', act: 'act', spell: 'magic', item: 'item', spare: 'spare', defend: 'defend' }[a.type];
           if (icon) g.drawImage(silhouetteCached(ICON.btn[icon], '#ffff00'), bx + bw - 15, PANEL_Y - 12);
         }
-        if (this.choosing && this.busyBy && this.busyBy[i] !== null) Mini.draw(g, 'AJUDANDO', bx + bw - 4, PANEL_Y - 8, '#ffff00', { align: 'right' });
+        if (this.choosing && this.busyBy && this.busyBy[i] !== null) Mini.draw(g, 'HELPING', bx + bw - 4, PANEL_Y - 8, '#ffff00', { align: 'right' });
       }
     });
     const ty = 189;
@@ -872,7 +872,7 @@ const Battle = {
     const m = this.party[this.cur];
     const heart = (x, y) => UI.heart(g, x, y + 5);
     if (this.ms === 'enemy') {
-      Mini.draw(g, 'HP', 220, ty + 1, '#9a9aa8', { align: 'center' }); Mini.draw(g, 'PIEDADE', 274, ty + 1, '#9a9aa8', { align: 'center' });
+      Mini.draw(g, 'HP', 220, ty + 1, '#9a9aa8', { align: 'center' }); Mini.draw(g, 'MERCY', 274, ty + 1, '#9a9aa8', { align: 'center' });
       this.alive().forEach((e, i) => {
         const y = ty + 5 + i * 15;
         const col = e.mercy >= 100 ? '#ffff00' : e.tired ? '#5ad2ff' : '#fff';
@@ -932,7 +932,7 @@ const Battle = {
         const c = r.flash > 0 ? (r.res === 'perfect' ? '#ffff00' : '#ffffff') : ATTACK_COLORS[m.id];
         g.fillStyle = c; g.fillRect(Math.round(r.x), y + 1, 4, 13);
       }
-      if (r.done && r.res === 'perfect' && r.flash > 0) Mini.draw(g, 'PERFEITO!', TX + 14, y + 5, '#ffff00');
+      if (r.done && r.res === 'perfect' && r.flash > 0) Mini.draw(g, 'PERFECT!', TX + 14, y + 5, '#ffff00');
     });
   },
   drawBubble(g, b) {

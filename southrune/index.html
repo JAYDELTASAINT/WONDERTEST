@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
 <style>
-/* Layout: tela do jogo 4:3 em pixel art; no toque, direcional à esquerda e botões Z/X/C à direita. */
+/* Layout: 4:3 pixel-art game screen; on touch devices, D-pad on the left and Z/X/C buttons on the right. */
 :root {
   color-scheme: dark;
   --bg: #000000;
@@ -66,7 +66,7 @@ body.touch.landscape #controls {
 }
 body.touch.landscape #controls > * { pointer-events: auto; opacity: 0.6; }
 
-/* Direcional em cruz */
+/* D-pad */
 #dpad { position: relative; width: 156px; height: 156px; flex: 0 0 auto; touch-action: none; }
 #dpad .arm { position: absolute; background: var(--panel); border: 2px solid var(--line); }
 #dpad .h { left: 0; right: 0; top: 50px; height: 56px; border-radius: 6px; }
@@ -87,7 +87,7 @@ body.touch.landscape #controls > * { pointer-events: auto; opacity: 0.6; }
   transform: none; transition: transform 60ms linear; pointer-events: none;
 }
 
-/* Botões Z / X / C */
+/* Z / X / C buttons */
 #btns { display: grid; grid-template-columns: repeat(2, auto); grid-template-rows: auto auto; gap: 10px 14px; align-items: center; flex: 0 0 auto; }
 .btn {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
@@ -114,20 +114,20 @@ body.touch.landscape #controls > * { pointer-events: auto; opacity: 0.6; }
 <body>
 <div id="app">
   <div id="stage">
-    <canvas id="screen" width="320" height="240" tabindex="0" role="img" aria-label="Tela do jogo SOUTHRUNE"></canvas>
-    <button id="fs" type="button" aria-label="Tela cheia" title="Tela cheia">⛶</button>
+    <canvas id="screen" width="320" height="240" tabindex="0" role="img" aria-label="SOUTHRUNE game screen"></canvas>
+    <button id="fs" type="button" aria-label="Fullscreen" title="Fullscreen">⛶</button>
   </div>
-  <div id="hint"><b>Setas</b> andar · <b>Z</b>/<b>Enter</b> confirmar · <b>X</b>/<b>Shift</b> voltar e correr · <b>C</b> menu</div>
+  <div id="hint"><b>Arrows</b> move · <b>Z</b>/<b>Enter</b> confirm · <b>X</b>/<b>Shift</b> back &amp; run · <b>C</b> menu</div>
   <div id="controls">
-    <div id="dpad" aria-label="Direcional">
+    <div id="dpad" aria-label="D-pad">
       <span class="arm h"></span><span class="arm v"></span><span class="hub"></span>
       <span class="arr up"></span><span class="arr down"></span><span class="arr left"></span><span class="arr right"></span>
       <span class="knob"></span>
     </div>
     <div id="btns">
       <button id="bC" class="btn" type="button" data-b="menu" aria-label="Menu (C)"><b>C</b><small>MENU</small></button>
-      <button id="bX" class="btn" type="button" data-b="cancel" aria-label="Voltar e correr (X)"><b>X</b><small>VOLTAR</small></button>
-      <button id="bZ" class="btn" type="button" data-b="confirm" aria-label="Confirmar (Z)"><b>Z</b><small>OK</small></button>
+      <button id="bX" class="btn" type="button" data-b="cancel" aria-label="Back and run (X)"><b>X</b><small>BACK</small></button>
+      <button id="bZ" class="btn" type="button" data-b="confirm" aria-label="Confirm (Z)"><b>Z</b><small>OK</small></button>
     </div>
   </div>
 </div>

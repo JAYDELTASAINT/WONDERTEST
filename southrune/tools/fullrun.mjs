@@ -25,12 +25,16 @@ const log = (...a) => console.log(new Date().toISOString().slice(14, 19), ...a);
 
 async function battle() {
   log('  batalha');
-  for (let i = 0; i < 900; i++) {
+  for (let i = 0; i < 3000; i++) {
     const s = await st();
     if (s.mode !== 'battle') { log('  fim da batalha'); return; }
     await page.evaluate(() => { for (const id of SR.G.party) SR.G.hp[id] = Math.max(SR.G.hp[id], 60); });
     if (s.bc && (s.bms === 'btn' || s.bms === 'enemy')) await press('z', 60);
-    else if (s.bms === 'qte') await press('z', 300);
+    else if (s.bms === 'qte') {
+      // aperta quando a barra mais próxima chega perto do alvo (x = 84)
+      const x = await page.evaluate(() => { const q = SR.Battle.qte; if (!q) return null; const live = q.rows.filter((r) => !r.done && r.x < 300).sort((a, b) => a.x - b.x); return live.length ? live[0].x : null; });
+      if (x !== null && x <= 96) await page.keyboard.press('z'); else await sleep(5);
+    }
     else if (s.bms === 'wave') await sleep(300);
     else await press('z', 150);
   }
@@ -41,7 +45,14 @@ async function settle(max = 400) {
     const s = await st();
     if (s.mode === 'battle') { await battle(); continue; }
     if (s.mode === 'custom') { await press('z', 150); continue; }
-    if (s.dlg) { if (s.choosing) return s; await press('x', 20); await press('z', 80); continue; }
+    if (s.dlg) {
+      if (s.choosing) return s;
+      await press('x', 30);
+      const s2 = await st();
+      if (s2.choosing) return s2;
+      await press('z', 80);
+      continue;
+    }
     if (s.mode === 'field' && s.busy === 0) return s;
     if (s.mode === 'shop') { await press('x', 100); continue; }
     await sleep(120);
@@ -77,8 +88,15 @@ async function walkTo(tx, ty, opts = {}) {
 async function face(dir) { await press('Arrow' + dir, 40); }
 async function step(name, fn) { log('>>', name); await fn(); const s = await st(); log('   ok', s.room, s.x, s.y, s.mode); }
 
+const fromGate = process.argv[3] === 'portao';
 try {
   await sleep(500);
+  if (fromGate) {
+    await press('z', 600);
+    await page.evaluate(() => SR.debug.start('portao', 16, 106, { facing: 'right', party: ['stan', 'kyle', 'kenny'],
+      flags: ['intro_done', 'mackey', 'fell', 'arrived', 'kenny_met', 'kenny_joined', 'tutorial_done', 'goomba_intro', 'puzzle1', 'goomba_fight1', 'mbp_seen', 'mbp_done'] }));
+    await sleep(800);
+  } else {
   await step('início', async () => { await press('z', 600); await press('c', 1500); await press('z', 2000); await shot('busstop'); await settle(); });
   await step('para a escola', async () => { await walkTo(300, 200); await walkTo(490, 200, { room: 'ponto' }); });
   await step('porta da escola', async () => { await settle(); await shot('escola'); await walkTo(240, 118, { room: 'escola' }); });
@@ -98,11 +116,14 @@ try {
   await step('campo3 → bosque', async () => { await walkTo(780, 104, { room: 'campo3' }); });
   await step('ManBearPig', async () => { await settle(); await walkTo(480, 104, { stopOnEvent: true }); await settle(800); });
   await step('bosque → portão', async () => { await walkTo(715, 104, { room: 'bosque' }); });
+  }
   await step('senha', async () => {
     await settle(); await shot('portao');
     await walkTo(240, 112, { stopOnEvent: true });
-    for (let i = 0; i < 80; i++) { const s = await st(); if (s.choosing) break; if (s.dlg) { await press('x', 20); await press('z', 80); } else await sleep(100); }
-    await press('ArrowDown', 100); await press('z', 300); await settle(600); await shot('gate_open');
+    const s0 = await settle();
+    if (!s0.choosing) throw new Error('a pergunta da senha não apareceu');
+    await shot('password_choice');
+    await press('ArrowRight', 120); await press('z', 300); await settle(600); await shot('gate_open');
   });
   await step('entrar no castelo', async () => { await walkTo(240, 64, { room: 'portao' }); });
   await step('salão', async () => { await settle(); await walkTo(160, 300); await walkTo(160, 240); await settle(); await walkTo(160, 60, { room: 'salao' }); });

@@ -203,8 +203,10 @@ const Dlg = {
     if (this.choosing) {
       const opts = this.entry.choice, n = opts.length;
       const grid = n === 2 || n === 4;
-      const step = grid ? 16 : 14;
-      const baseY = y + 8 + this.lines.length * 16 + (grid ? 4 : 0);
+      // com duas linhas de pergunta, a grade 2x2 sobe um pouco para caber na caixa
+      const tight = grid && n === 4 && this.lines.length > 1;
+      const step = grid && !tight ? 16 : 14;
+      const baseY = y + 8 + this.lines.length * 16 + (grid && !tight ? 4 : 0);
       opts.forEach((o, i) => {
         let ox, oy;
         if (grid) { ox = tx + 18 + (i % 2) * 120; oy = baseY + Math.floor(i / 2) * step; }
@@ -303,9 +305,9 @@ const SaveMenu = {
     Font.draw(g, fmtTime(info.time || 0), x + w - 16, y + 10, col, { align: 'right' });
     Font.draw(g, (info.saveRoomName || '').slice(0, 26), x + 16, y + 30, col);
     if (this.saved) {
-      Font.draw(g, 'Arquivo salvo.', x + 16, y + 62, '#ffff00');
+      Font.draw(g, 'File saved.', x + 16, y + 62, '#ffff00');
     } else {
-      ['Salvar', 'Voltar'].forEach((t, i) => {
+      ['Save', 'Return'].forEach((t, i) => {
         const ox = x + 40 + i * 100;
         Font.draw(g, t, ox, y + 62, i === this.idx ? '#ffff00' : '#fff');
         if (i === this.idx) UI.heart(g, ox - 13, y + 67);
@@ -318,7 +320,7 @@ const SaveMenu = {
 const GEAR_ICON = () => fromRows(['....##....', '.#.####.#.', '.########.', '..##..##..', '###....###', '###....###', '..##..##..', '.########.', '.#.####.#.', '....##....'], { '#': '#ffffff' });
 const FieldMenu = {
   active: false, sel: 0, mode: 'top', idx: 0, who: 0, slot: 0, list: [], msg: null, conf: 0,
-  labels: ['ITEM', 'EQUIP', 'PODER', 'CONFIG'],
+  labels: ['ITEM', 'EQUIP', 'POWER', 'CONFIG'],
   open() { this.active = true; this.sel = 0; this.mode = 'top'; this.msg = null; Sfx.play('select'); },
   close() { this.active = false; Sfx.play('cancel'); },
   icons() {
@@ -355,10 +357,10 @@ const FieldMenu = {
           const it = ITEMS[G.items[this.idx]];
           if (this.slot === 1) { // jogar fora
             removeItemAt(this.idx); Sfx.play('select');
-            this.msg = { t: 0, text: `* Você jogou fora ${it.name}.` };
+            this.msg = { t: 0, text: `* You threw away the ${it.name}.` };
             this.mode = G.items.length ? 'items' : 'top'; this.idx = Math.min(this.idx, G.items.length - 1);
           } else if (it.type !== 'heal') {
-            Sfx.play('error'); this.msg = { t: 0, text: '* Isso é um equipamento. Use o menu EQUIP.' };
+            Sfx.play('error'); this.msg = { t: 0, text: "* That's equipment. Use the EQUIP menu." };
           } else if (it.all || G.party.length === 1) {
             this.useItem(this.idx, it.all ? null : G.party[0]);
           } else { this.mode = 'itemWho'; this.who = 0; }
@@ -387,7 +389,7 @@ const FieldMenu = {
           this.list = [];
           G.items.forEach((it, i) => { const d = ITEMS[it]; if (d.type === want && (!d.who || d.who.includes(id))) this.list.push(i); });
           if (want === 'armor') this.list.push(-1);
-          if (!this.list.length) { Sfx.play('error'); this.msg = { t: 0, text: '* Você não tem nada para equipar aí.' }; }
+          if (!this.list.length) { Sfx.play('error'); this.msg = { t: 0, text: '* You have nothing to equip there.' }; }
           else { Sfx.play('select'); this.mode = 'equipItem'; this.idx = 0; }
         }
         break;
@@ -444,10 +446,11 @@ const FieldMenu = {
   useItem(idx, who) {
     const it = ITEMS[G.items[idx]];
     let text;
-    if (it.all) { for (const id of G.party) healMember(id, it.heal); text = `* O grupo usou ${it.name}. HP recuperado!`; }
+    if (it.all) { for (const id of G.party) healMember(id, it.heal); text = `* The party shared the ${it.name}. HP recovered!`; }
     else {
       const got = healMember(who, it.heal);
-      text = got >= maxHp(who) - 0 && G.hp[who] === maxHp(who) && got > 0 ? `* ${MEMBERS[who].name} usou ${it.name}. HP no máximo!` : `* ${MEMBERS[who].name} usou ${it.name}. +${got} HP.`;
+      const nm = MEMBERS[who].name[0] + MEMBERS[who].name.slice(1).toLowerCase();
+      text = G.hp[who] === maxHp(who) ? `* ${nm} used the ${it.name}. HP maxed out!` : `* ${nm} used the ${it.name}. +${got} HP.`;
     }
     removeItemAt(idx);
     Sfx.play('heal');
@@ -487,25 +490,25 @@ const FieldMenu = {
         if (i === this.idx && this.mode === 'items') UI.heart(g, cx - 13, cy + 5);
       });
       const it = ITEMS[G.items[this.idx]];
-      if (it) { g.fillStyle = '#fff'; g.fillRect(px + 8, py + ph - 42, pw - 16, 1); Font.block(g, it.desc, px + 12, py + ph - 38, 34, { color: '#c0c0c0' }); }
+      if (it) { g.fillStyle = '#fff'; g.fillRect(px + 8, py + ph - 42, pw - 16, 1); Font.block(g, it.desc, px + 12, py + ph - 38, 33, { color: '#c0c0c0' }); }
       if (this.mode === 'itemAct' || this.mode === 'itemWho') {
         UI.box(g, px + 60, py + 50, 150, 40, style);
-        ['USAR', 'JOGAR FORA'].forEach((t, i) => {
-          const ox = px + 82 + i * 56;
+        ['USE', 'TOSS'].forEach((t, i) => {
+          const ox = px + 90 + i * 56;
           Font.draw(g, t, ox, py + 62, i === this.slot ? '#ffff00' : '#fff');
           if (i === this.slot && this.mode === 'itemAct') UI.heart(g, ox - 12, py + 67);
         });
-        if (this.mode === 'itemWho') Font.draw(g, 'Em quem?', px + 72, py + 74, '#9a9a9a');
+        if (this.mode === 'itemWho') Font.draw(g, 'On who?', px + 72, py + 74, '#9a9a9a');
       }
     } else if (['equipWho', 'equipSlot', 'equipItem'].includes(this.mode)) {
       UI.box(g, px, py, pw, ph, style);
       const id = G.party[this.who], e = G.equip[id];
       Font.draw(g, `${MEMBERS[id].name}  ${MEMBERS[id].title}`, px + 12, py + 6, MEMBERS[id].color);
-      const slots = [['ARMA', e.weapon], ['ARMADURA', e.armor[0]], ['ARMADURA', e.armor[1]]];
+      const slots = [['WEAPON', e.weapon], ['ARMOR', e.armor[0]], ['ARMOR', e.armor[1]]];
       slots.forEach(([lbl, it], i) => {
         const cy = py + 30 + i * 18;
         Mini.draw(g, lbl, px + 24, cy + 6, '#9a9a9a');
-        Font.draw(g, it ? ITEMS[it].name : '(nada)', px + 86, cy, this.mode === 'equipSlot' && this.slot === i ? '#ffff00' : '#fff');
+        Font.draw(g, it ? ITEMS[it].name : '(none)', px + 86, cy, this.mode === 'equipSlot' && this.slot === i ? '#ffff00' : '#fff');
         if (this.mode === 'equipSlot' && this.slot === i) UI.heart(g, px + 10, cy + 5);
       });
       const sy = py + 92;
@@ -513,13 +516,13 @@ const FieldMenu = {
       if (this.mode === 'equipItem') {
         UI.box(g, px + 120, py + 26, 150, 18 + this.list.length * 16, style);
         this.list.forEach((invIdx, i) => {
-          const t = invIdx >= 0 ? ITEMS[G.items[invIdx]].name : '(tirar)';
+          const t = invIdx >= 0 ? ITEMS[G.items[invIdx]].name : '(remove)';
           Font.draw(g, t, px + 140, py + 32 + i * 16, i === this.idx ? '#ffff00' : '#fff');
           if (i === this.idx) UI.heart(g, px + 128, py + 37 + i * 16);
         });
         const invIdx = this.list[this.idx];
-        if (invIdx >= 0) Font.block(g, ITEMS[G.items[invIdx]].desc, px + 12, py + 112, 34, { color: '#c0c0c0' });
-      } else if (this.mode === 'equipWho') Font.draw(g, '< escolha quem >', px + pw / 2, py + 124, '#9a9a9a', { align: 'center' });
+        if (invIdx >= 0) Font.block(g, ITEMS[G.items[invIdx]].desc, px + 12, py + 112, 33, { color: '#c0c0c0' });
+      } else if (this.mode === 'equipWho') Font.draw(g, '< choose who >', px + pw / 2, py + 124, '#9a9a9a', { align: 'center' });
     } else if (this.mode === 'powerWho' || this.mode === 'power') {
       UI.box(g, px, py, pw, ph, style);
       const id = G.party[this.who], m = MEMBERS[id];
@@ -528,23 +531,23 @@ const FieldMenu = {
       Font.draw(g, m.title, px + 62, py + 24, '#fff');
       Font.draw(g, `LV 1   HP ${G.hp[id]}/${maxHp(id)}`, px + 62, py + 40, '#fff');
       Font.draw(g, `ATK ${stat(id, 'atk')}  DEF ${stat(id, 'def')}  MAG ${stat(id, 'mag')}`, px + 12, py + 62, '#fff');
-      Font.block(g, m.desc, px + 12, py + 80, 34, { color: '#c0c0c0' });
+      Font.block(g, m.desc, px + 12, py + 80, 33, { color: '#c0c0c0' });
       if (m.spells.length) {
         m.spells.forEach((s, i) => {
           const sp = SPELLS[s];
           Font.draw(g, sp.name, px + 12, py + 116 + i * 16, '#fff');
           Font.draw(g, `${sp.tp}% TP`, px + pw - 12, py + 116 + i * 16, '#ff9a1f', { align: 'right' });
         });
-      } else Font.draw(g, 'Usa AGIR: conversa e age.', px + 12, py + 116, '#fff');
+      } else Font.draw(g, 'Uses ACT: talks and does stuff.', px + 12, py + 116, '#fff');
     } else if (this.mode === 'config' || this.mode === 'quit') {
       UI.box(g, px, py, pw, ph, style);
-      const touchLbl = ['Automático', 'Sempre', 'Nunca'][Game.conf.touch];
+      const touchLbl = ['Auto', 'Always', 'Never'][Game.conf.touch];
       const rows = [
-        ['Volume geral', `${Math.round(Sfx.vol.master * 100)}%`],
-        ['Música', `${Math.round(Sfx.vol.music * 100)}%`],
-        ['Controles na tela', touchLbl],
-        ['Tela cheia', ''],
-        ['Voltar ao título', ''],
+        ['Master Volume', `${Math.round(Sfx.vol.master * 100)}%`],
+        ['Music', `${Math.round(Sfx.vol.music * 100)}%`],
+        ['Touch Controls', touchLbl],
+        ['Fullscreen', ''],
+        ['Return to Title', ''],
       ];
       rows.forEach(([a, b], i) => {
         const cy = py + 12 + i * 20;
@@ -554,8 +557,8 @@ const FieldMenu = {
       });
       if (this.mode === 'quit') {
         UI.box(g, px + 30, py + 60, pw - 60, 56, style);
-        Font.draw(g, 'Voltar ao título?', px + pw / 2, py + 68, '#fff', { align: 'center' });
-        ['Sim', 'Não'].forEach((t, i) => {
+        Font.draw(g, 'Return to title?', px + pw / 2, py + 68, '#fff', { align: 'center' });
+        ['Yes', 'No'].forEach((t, i) => {
           const ox = px + 90 + i * 70;
           Font.draw(g, t, ox, py + 90, i === this.conf ? '#ffff00' : '#fff');
           if (i === this.conf) UI.heart(g, ox - 13, py + 95);

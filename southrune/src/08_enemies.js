@@ -179,7 +179,7 @@ const PATTERNS = {
       if (ph === 1 && every(c, 12)) B.spawn({ img: bspr('claw'), x: U.rnd(ib.x + 6, ib.x2 - 6), y: ib.y - 8, vy: 3.2, r: 6, dmg: c.e.atk, clip: true });
       if (ph === 2 && every(c, 10)) B.spawn({ img: bspr('mud'), x: U.rnd(ib.x + 6, ib.x2 - 6), y: ib.y2 + 6, vy: -3, r: 3.5, dmg: c.e.atk, clip: true });
     },
-    drawOver(g, B, c) { const lbl = ['HOMEM', 'URSO', 'PORCO'][Math.min(2, Math.floor(c.t / 70))]; const ib = B.inner(); Mini.draw(g, lbl, ib.cx, ib.y - 9, '#ff5050', { align: 'center' }); },
+    drawOver(g, B, c) { const lbl = ['MAN', 'BEAR', 'PIG'][Math.min(2, Math.floor(c.t / 70))]; const ib = B.inner(); Mini.draw(g, lbl, ib.cx, ib.y - 9, '#ff5050', { align: 'center' }); },
   },
   /* --- Goomba --- */
   goomba_march: {
@@ -243,7 +243,7 @@ const PATTERNS = {
       const ib = B.inner();
       if (every(c, 34) && c.t < 170) {
         let row = U.irnd(0, 2); if (row === c.d.last) row = (row + 1) % 3; c.d.last = row;
-        const word = U.pick(['AUTORIDADE', 'RESPEITEM', 'OBEDEÇAM']);
+        const word = U.pick(['AUTHORITAH', 'RESPECT', 'OBEY ME']);
         const y = ib.y + 14 + row * 26, left = Math.random() < 0.5;
         const sp = 2.6 * (left ? 1 : -1);
         for (let i = 0; i < word.length; i++) {
@@ -300,7 +300,7 @@ const PATTERNS = {
   screw_you: {
     w: 96, h: 80, dur: 200, update(B, c) {
       const ib = B.inner();
-      const phrase = 'DANEM-SE VOCÊS! VOU PRA CASA!';
+      const phrase = "SCREW YOU GUYS! I'M GOING HOME!";
       if (every(c, 6)) {
         c.d.i = ((c.d.i || 0) + 1) % phrase.length;
         const ch = phrase[c.d.i];
@@ -364,108 +364,109 @@ async function memberSays(B, id, text, auto) {
 /* ---------- Inimigos ---------- */
 const ENEMIES = {
   srchapeu: {
-    name: 'Sr. Chapéu', hp: 70, atk: 5, def: 0, money: 0, voice: 'hat', tiredAt: 0.4,
-    check: '* SR. CHAPÉU - ATK 5 DEF 0\n* Um boneco de treino. Já foi de um professor.',
-    intro: '* O Sr. Chapéu bloqueia o caminho!\n* (É só um boneco de treino.)',
-    flavor: ['* O Sr. Chapéu encara o vazio.', '* O Sr. Chapéu ajeita a cartola.', '* Cheiro de serragem.'],
-    acts: [{ name: 'Conversar', fn: async (B, e) => { await B.say('* Você puxou papo com o Sr. Chapéu.\n* Ele parece gostar de você.'); B.addMercy(e, 50); } }],
-    talk: (B, e) => U.pick(['...', 'Mm-hmm.', 'Que coisa, hein?', '(silêncio de boneco)']),
+    name: 'Mr. Hat', hp: 70, atk: 5, def: 0, money: 0, voice: 'hat', tiredAt: 0.4,
+    check: "* MR. HAT - ATK 5 DEF 0\n* Mr. Garrison's old puppet. Has strong opinions.",
+    intro: "* Mr. Hat blocks the way!\n* (It's just a training dummy.)",
+    flavor: ['* Mr. Hat stares into the void.', '* Mr. Hat adjusts his top hat.', '* Smells like sawdust and teacher lounge.'],
+    acts: [{ name: 'Talk', fn: async (B, e) => { await B.say('* You made small talk with Mr. Hat.\n* He seems to like you more than Mr. Garrison.'); B.addMercy(e, 50); } }],
+    talk: (B, e) => U.pick(['...', 'Mm-hmm.', "That's what I said!", '(puppet silence)']),
     patterns: ['hat_rain', 'hat_line'],
   },
   cheesinho: {
-    name: 'Cheesinho', hp: 140, atk: 9, def: 0, money: 18, voice: 'monster',
-    check: '* CHEESINHO - ATK 9 DEF 0\n* Um salgadinho de queijo bravo. Odeia ser mastigado.',
-    intro: '* Cheesinho rolou até você!',
-    flavor: ['* Cheesinho espalha farelos laranjas por todo lado.', '* Cheiro de queijo processado.', '* Cheesinho está crocante de raiva.'],
+    name: 'Poofling', hp: 140, atk: 9, def: 0, money: 18, voice: 'monster',
+    check: '* POOFLING - ATK 9 DEF 0\n* An angry Cheesy Poof. Hates being chewed.',
+    intro: '* A Poofling rolls up to you!',
+    flavor: ['* Poofling leaves orange dust everywhere.', '* Smells like processed cheese.', '* Poofling is crunchy with rage.'],
     art: (B, e, f) => Spr.enemy('cheesinho', f, e.tired ? 'tired' : e.mercy >= 100 ? 'happy' : 'angry'),
     acts: [
-      { name: 'Elogiar', fn: async (B, e) => { await B.say('* Você elogiou a crocância do Cheesinho.'); B.addMercy(e, 35); e.data.praised = true; } },
-      { name: 'Prometer', fn: async (B, e) => { await B.say('* Você prometeu nunca, jamais, comer o Cheesinho.\n* (Isso vai ser difícil.)'); B.addMercy(e, 30); } },
-      { name: 'Ler rótulo', req: ['kyle'], fn: async (B, e) => { await memberSays(B, 'kyle', 'Sódio: 900%. Corante: SIM. Queijo: ...não consta.'); await B.say('* Cheesinho ficou envergonhado com a própria tabela nutricional.'); B.addMercy(e, 65); B.tire(e); } },
+      { name: 'Compliment', fn: async (B, e) => { await B.say("* You told Poofling it has a great crunch."); B.addMercy(e, 35); e.data.praised = true; } },
+      { name: 'Promise', fn: async (B, e) => { await B.say('* You promised to never, ever eat Poofling.\n* (Cartman would never.)'); B.addMercy(e, 30); } },
+      { name: 'Read Label', req: ['kyle'], fn: async (B, e) => { await memberSays(B, 'kyle', 'Sodium: 900%. Cheese: ...not listed. Dude.'); await B.say('* Poofling is embarrassed by its own nutrition facts.'); B.addMercy(e, 65); B.tire(e); } },
     ],
-    talk: (B, e) => e.mercy >= 100 ? 'Tá bom... vocês são legais.' : e.data.praised ? 'Para com isso... (crunch)' : U.pick(['Crunch! Crunch!', 'Ninguém me mastiga!', 'Sou 100% queijo artificial!', 'Laranja é a cor da raiva!']),
+    talk: (B, e) => e.mercy >= 100 ? "Fine... you guys are cool." : e.data.praised ? 'Stop it... (crunch)' : U.pick(['Crunch! Crunch!', 'Nobody chews ME!', '100% artificial cheese!', "You're gonna... NOT eat me!"]),
     patterns: ['puff_rain', 'fork_stab', 'crumb_spray'],
   },
   peru: {
-    name: 'Peru Mutante', hp: 170, atk: 11, def: 1, money: 24, voice: 'goomba',
-    check: '* PERU MUTANTE - ATK 11 DEF 1\n* Fugiu de uma fazenda bem estranha. Odeia feriados.',
-    intro: '* Um Peru Mutante surgiu gritando!',
-    flavor: ['* O Peru Mutante gorgoleja de forma ameaçadora.', '* Penas voam por todo lado.', '* Um dos olhos do Peru Mutante te encara. O outro, não.'],
+    name: 'Mutant Turkey', hp: 170, atk: 11, def: 1, money: 24, voice: 'goomba',
+    check: '* MUTANT TURKEY - ATK 11 DEF 1\n* Genetically engineered. Still mad about Thanksgiving.',
+    intro: '* A Mutant Turkey attacks, gobbling!',
+    flavor: ['* The Mutant Turkey gobbles menacingly.', '* Feathers everywhere.', '* One eye stares at you. The other one does not.'],
     acts: [
-      { name: 'Imitar', fn: async (B, e) => { await B.say('* Você fez "GLU GLU GLU".\n* O Peru Mutante achou que você é da família.'); B.addMercy(e, 35); } },
-      { name: 'Agradecer', fn: async (B, e) => { await B.say('* Você desejou um feliz Dia de Ação de Graças.\n* O Peru Mutante ficou {r}MUITO{w} ofendido.'); e.atk += 2; e.data.offended = true; } },
-      { name: 'Dar milho', req: ['kenny'], fn: async (B, e) => { await B.say('* Kenny tirou um milho do bolso.\n* (Ninguém quer saber de onde.)'); B.addMercy(e, 60); } },
+      { name: 'Gobble', fn: async (B, e) => { await B.say('* You went "GOBBLE GOBBLE GOBBLE."\n* The Mutant Turkey thinks you are family.'); B.addMercy(e, 35); } },
+      { name: 'Thank', fn: async (B, e) => { await B.say('* You wished it a Happy Thanksgiving.\n* The Mutant Turkey is {r}VERY{w} offended.'); e.atk += 2; e.data.offended = true; } },
+      { name: 'Give Corn', req: ['kenny'], fn: async (B, e) => { await B.say('* Kenny pulled some corn out of his hood.\n* (Nobody wants to know where it came from.)'); B.addMercy(e, 60); } },
     ],
-    talk: (B, e) => e.data.offended ? (e.data.offended = false, 'EU NÃO VOU PRO FORNO!!') : e.mercy >= 100 ? 'glu... glu? (feliz)' : U.pick(['GLU GLU!', 'GLUGLUGLU?!', 'Penas pra todo lado!']),
+    talk: (B, e) => e.data.offended ? (e.data.offended = false, "I'M NOT GOING IN THE OVEN!!") : e.mercy >= 100 ? 'gobble... (happy)' : U.pick(['GOBBLE GOBBLE!', 'GOBBLEGOBBLE?!', 'Feathers for EVERYONE!']),
     patterns: ['feather_fan', 'turkey_charge', 'gobble_ring'],
   },
   clyde: {
-    name: 'Sapo Clyde', hp: 150, atk: 10, def: 0, money: 20, voice: 'butters',
-    check: '* SAPO CLYDE - ATK 10 DEF 0\n* Bicho de pelúcia do Cartman. Ganhou vida no Mundo Sombrio.',
-    intro: '* O Sapo Clyde quer tomar chá com você!',
-    flavor: ['* O Sapo Clyde serve chá invisível.', '* Cheiro de pelúcia guardada no armário.', '* O Sapo Clyde ajeita a gravata imaginária.'],
+    name: 'Clyde Frog', hp: 150, atk: 10, def: 0, money: 20, voice: 'butters',
+    check: "* CLYDE FROG - ATK 10 DEF 0\n* Cartman's stuffed frog. Came to life in the Dark World.",
+    intro: '* Clyde Frog invites you to a tea party!',
+    flavor: ['* Clyde Frog pours invisible tea.', '* Smells like a toy box.', '* Clyde Frog adjusts his imaginary bow tie.'],
     art: (B, e, f) => Spr.enemy('clyde', f, e.mercy >= 100 ? 'happy' : e.data.mad ? 'angry' : 'neutral'),
     acts: [
-      { name: 'Tomar chá', fn: async (B, e) => { await B.say('* Você aceitou uma xícara de chá imaginário.\n* Estava... imaginariamente bom.'); B.addMercy(e, 40); } },
-      { name: 'Conversar', fn: async (B, e) => { await B.say('* Você perguntou como é ser um bicho de pelúcia.'); B.addMercy(e, 25); e.data.talked = true; } },
-      { name: 'Elogiar chá', req: ['kyle'], fn: async (B, e) => { await memberSays(B, 'kyle', 'Hum! Que chá sofisticado, senhor Clyde.'); B.addMercy(e, 55); } },
+      { name: 'Drink Tea', fn: async (B, e) => { await B.say('* You accepted a cup of imaginary tea.\n* It was... imaginarily delicious.'); B.addMercy(e, 40); } },
+      { name: 'Chat', fn: async (B, e) => { await B.say('* You asked what it is like being a stuffed animal.'); B.addMercy(e, 25); e.data.talked = true; } },
+      { name: 'Praise Tea', req: ['kyle'], fn: async (B, e) => { await memberSays(B, 'kyle', 'Mmm! Very fancy tea, Mr. Clyde.'); B.addMercy(e, 55); } },
     ],
-    talk: (B, e) => e.data.talked ? (e.data.talked = false, 'O Cartman me deixava no armário...') : e.mercy >= 100 ? 'Que visita agradável!' : U.pick(['Ribbit... mais chá?', 'Chá das cinco!', 'Mindinho levantado, por favor.']),
+    talk: (B, e) => e.data.talked ? (e.data.talked = false, 'Cartman used to lock me in the closet...') : e.mercy >= 100 ? 'What lovely guests!' : U.pick(['Ribbit... more tea?', 'Polly Prissypants was NOT invited.', 'Pinkies up, please.']),
     patterns: ['frog_hop', 'tea_pour'],
   },
   mbp: {
     name: 'ManBearPig', hp: 720, atk: 14, def: 2, money: 80, voice: 'mbp', tiredAt: 0.25,
-    check: '* MANBEARPIG - ATK 14 DEF 2\n* Meio homem, meio urso, meio porco. Ninguém o leva a sério.',
-    intro: '* MANBEARPIG apareceu!\n* (Isso é sério. Super sério.)',
-    flavor: (B, e) => U.pick(['* ManBearPig rosna em três idiomas.', '* ManBearPig está meio bravo, meio faminto, meio confuso.', '* Cheiro de floresta, chiqueiro e colônia barata.']),
+    check: "* MANBEARPIG - ATK 14 DEF 2\n* Half man, half bear, half pig. Nobody takes it seriously.",
+    intro: "* MANBEARPIG appears!\n* (This is serious. Super cereal.)",
+    flavor: (B, e) => U.pick(['* ManBearPig growls in three languages.', '* ManBearPig is half angry, half hungry, half confused.', '* Smells like forest, pigpen and cheap cologne.']),
     art: (B, e, f) => Spr.enemy('mbp', f),
     acts: [
-      { name: 'Levar a sério', fn: async (B, e) => { await B.say('* Você olhou fundo nos olhos do ManBearPig e disse: "Eu levo você a sério."'); B.addMercy(e, 25); e.data.serious = true; } },
-      { name: 'Fazer conta', fn: async (B, e) => { await B.say('* Você tentou somar meio + meio + meio.\n* Deu um e meio. ManBearPig ficou confuso.'); B.addMercy(e, 15); B.tire(e); } },
-      { name: 'Super cereal', req: ['kyle'], fn: async (B, e) => { await memberSays(B, 'kyle', 'Pessoal... isso é SÉRIO. Super cereal!'); await B.say('* ManBearPig se sentiu respeitado pela primeira vez na vida.'); B.addMercy(e, 40); } },
-      { name: 'Fingir morte', req: ['kenny'], fn: async (B, e) => { await B.say('* Kenny se fingiu de morto.\n* Ele é muito, MUITO bom nisso.'); B.addMercy(e, 30); } },
+      { name: 'Take Seriously', fn: async (B, e) => { await B.say('* You looked ManBearPig in the eyes and said: "I take you seriously."'); B.addMercy(e, 25); e.data.serious = true; } },
+      { name: 'Do the Math', fn: async (B, e) => { await B.say('* You tried adding half + half + half.\n* That is one and a half. ManBearPig is confused.'); B.addMercy(e, 15); B.tire(e); } },
+      { name: 'Super Cereal', req: ['kyle'], fn: async (B, e) => { await memberSays(B, 'kyle', "Guys... this is SERIOUS. I'm super cereal!"); await B.say('* ManBearPig feels respected for the first time in its life.'); B.addMercy(e, 40); } },
+      { name: 'Play Dead', req: ['kenny'], fn: async (B, e) => { await B.say("* Kenny played dead.\n* He's had a LOT of practice."); B.addMercy(e, 30); } },
     ],
-    talk: (B, e) => e.data.serious ? (e.data.serious = false, 'GRRR... (ninguém nunca disse isso)') : e.mercy >= 100 ? '...grrrunk. (paz)' : U.pick(['MEIO HOMEM!', 'MEIO URSO!', 'MEIO PORCO!', 'GRRROINK!']),
+    talk: (B, e) => e.data.serious ? (e.data.serious = false, 'GRRR... (nobody ever said that)') : e.mercy >= 100 ? '...grrrunk. (peace)' : U.pick(['HALF MAN!', 'HALF BEAR!', 'HALF PIG!', 'GRRROINK!']),
     patterns: ['claw_sweep', 'mud_rain', 'half_triple'],
   },
   goomba1: {
-    name: 'Goomba', sprite: 'goomba', hp: 320, atk: 9, def: 1, money: 0, voice: 'goomba', tiredAt: 0,
-    check: '* GOOMBA - ATK 9 DEF 1\n* Cavaleiro do Imperador. Veio de um reino de cogumelos.',
-    intro: '* SIR GOOMBA ataca!',
-    flavor: ['* Goomba balança a capa de forma dramática.', '* Goomba tenta parecer ameaçador.', '* Goomba ensaia sua risada maligna.'],
+    name: 'Sir Goomba', sprite: 'goomba', hp: 320, atk: 9, def: 1, money: 0, voice: 'goomba', tiredAt: 0,
+    check: "* SIR GOOMBA - ATK 9 DEF 1\n* The Emperor's knight. Came from a mushroom kingdom. A plumber kept jumping on him.",
+    intro: '* SIR GOOMBA attacks!',
+    flavor: ['* Sir Goomba swishes his cape dramatically.', '* Sir Goomba tries to look scary.', '* Sir Goomba practices his evil laugh.'],
     art: (B, e, f) => Spr.enemy('goomba', f, e.data.squash > 0 ? 'squash' : e.mercy >= 60 ? 'happy' : 'angry'),
     acts: [
-      { name: 'Elogiar capa', fn: async (B, e) => { await B.say('* Você disse que a capa do Goomba é muito estilosa.'); await enemySays(B, e, 'VERDADE?! Q-quer dizer... É CLARO que é!'); B.addMercy(e, 30); } },
-      { name: 'Pular nele', fn: async (B, e) => { Sfx.play('jump'); await wait(10); Sfx.play('stomp'); e.data.squash = 30; await B.say('* Stan pulou na cabeça do Goomba!\n* Ele ficou achatado... e desachatou.'); B.damageEnemy(e, 30, B.member('stan')); B.addMercy(e, 15); } },
-      { name: 'Rir junto', req: ['kyle'], fn: async (B, e) => { await B.say('* Kyle e Stan riram da risada maligna do Goomba.'); await enemySays(B, e, 'Vocês... gostaram da minha risada?! HO HO!'); B.addMercy(e, 40); } },
+      { name: 'Praise Cape', fn: async (B, e) => { await B.say("* You told Sir Goomba his cape looks super cool."); await enemySays(B, e, 'REALLY?! I-I mean... OF COURSE it does!'); B.addMercy(e, 30); } },
+      { name: 'Stomp', fn: async (B, e) => { Sfx.play('jump'); await wait(10); Sfx.play('stomp'); e.data.squash = 30; await B.say('* Stan jumped on Sir Goomba\'s head!\n* He got flattened... then un-flattened.'); B.damageEnemy(e, 30, B.member('stan')); B.addMercy(e, 15); } },
+      { name: 'Laugh Along', req: ['kyle'], fn: async (B, e) => { await B.say("* Kyle and Stan laughed at Sir Goomba's evil laugh."); await enemySays(B, e, 'You guys... like my laugh?! HO HO!'); B.addMercy(e, 40); } },
     ],
     onTurnEnd: async (B, e) => { e.data.squash = 0; },
-    talk: (B, e) => U.pick(['HO HO HO! Tremam!', 'Pela CAPA do Imperador!', 'Eu sou um Goomba, NÃO um cogumelo!', 'Prepare-se para ser... PISOTEADO!']),
+    talk: (B, e) => U.pick(['HO HO HO! Tremble!', 'For the Emperor\'s CAPE!', "I'm a Goomba, NOT a mushroom!", 'Prepare to be STOMPED! ...wait, that usually happens to ME.']),
     patterns: ['goomba_march', 'cape_slash'],
   },
   goomba: {
-    name: 'Goomba', sprite: 'goomba', hp: 800, atk: 12, def: 2, money: 0, voice: 'goomba', tiredAt: 0,
-    check: '* GOOMBA - ATK 12 DEF 2\n* O cavaleiro fiel do Imperador. Prometeram a ele uma capa maior.',
-    flavor: ['* Goomba protege o Imperador.', '* A capa do Goomba ondula sem vento.'],
+    name: 'Sir Goomba', sprite: 'goomba', hp: 800, atk: 12, def: 2, money: 0, voice: 'goomba', tiredAt: 0,
+    check: "* SIR GOOMBA - ATK 12 DEF 2\n* The Emperor's loyal knight. Was promised a bigger cape.",
+    flavor: ['* Sir Goomba protects the Emperor.', '* Sir Goomba\'s cape flutters with no wind.'],
     art: (B, e, f) => Spr.enemy('goomba', f, e.data.squash > 0 ? 'squash' : e.data.sad ? 'sad' : e.mercy >= 60 ? 'happy' : 'angry'),
     acts: [
-      { name: 'Elogiar capa', fn: async (B, e) => { await B.say('* Você elogiou a capa do Goomba de novo.\n* Ele ficou vermelho. Mais vermelho que a capa.'); B.addMercy(e, 20); } },
-      { name: 'Pular nele', fn: async (B, e) => { Sfx.play('jump'); await wait(10); Sfx.play('stomp'); e.data.squash = 30; await B.say('* Stan pulou no Goomba! BOING!'); B.damageEnemy(e, 40, B.member('stan')); B.addMercy(e, 10); } },
-      { name: 'Capa maior?', req: ['kyle'], fn: async (B, e) => {
-        await memberSays(B, 'kyle', 'Goomba... o Cartman já te deu ALGUMA coisa que prometeu?');
-        await enemySays(B, e, '...ele prometeu uma CAPA MAIOR...');
+      { name: 'Praise Cape', fn: async (B, e) => { await B.say('* You praised Sir Goomba\'s cape again.\n* He blushed. Redder than the cape.'); B.addMercy(e, 20); } },
+      { name: 'Stomp', fn: async (B, e) => { Sfx.play('jump'); await wait(10); Sfx.play('stomp'); e.data.squash = 30; await B.say('* Stan jumped on Sir Goomba! BOING!\n* (Old habits.)'); B.damageEnemy(e, 40, B.member('stan')); B.addMercy(e, 10); } },
+      { name: 'Bigger Cape?', req: ['kyle'], fn: async (B, e) => {
+        await memberSays(B, 'kyle', 'Goomba... has Cartman EVER given you anything he promised?');
+        await enemySays(B, e, '...he promised me a BIGGER CAPE...');
         const c = B.enemies.find((x) => x.id === 'cartman' && !x.gone);
-        if (c) await enemySays(B, c, 'NÃO ESCUTA ELES, GOOMBA!');
+        if (c) await enemySays(B, c, "DON'T LISTEN TO HIM, GOOMBA! HE'S A JERSEY GUY!");
         e.data.sad = true; B.addMercy(e, 35);
       } },
-      { name: 'Afagar', req: ['kenny'], fn: async (B, e) => { await B.say('* Kenny deu tapinhas carinhosos no chapéu do Goomba.\n* (Era a cabeça dele.)'); B.addMercy(e, 20); } },
+      { name: 'Pat', req: ['kenny'], fn: async (B, e) => { await B.say("* Kenny gave Sir Goomba a gentle pat on the hat.\n* (It was his head.)"); B.addMercy(e, 20); } },
     ],
     onTurnEnd: async (B, e) => { e.data.squash = 0; },
-    talk: (B, e) => e.data.sad ? 'Majestade... é verdade?' : U.pick(['Pela glória do Imperador!', 'HO HO HO!', 'Minha capa vai ficar MAIOR!']),
+    talk: (B, e) => e.data.sad ? 'Your Majesty... is it true?' : U.pick(['For the glory of the Emperor!', 'HO HO HO!', 'My cape will be BIGGER!']),
     onSpare: async (B, e) => {
-      await enemySays(B, e, 'Majestade... você MENTIU pra mim. EU ME DEMITO!');
+      await enemySays(B, e, 'Your Majesty... you LIED to me. I QUIT!');
+      await enemySays(B, e, 'First the Koopas took my job, now this... DEY TOOK ER JERBS!');
       const c = B.enemies.find((x) => x.id === 'cartman' && !x.gone);
-      if (c) { c.data.alone = true; await enemySays(B, c, 'Ah, é?! Então EU MESMO acabo com vocês!'); }
+      if (c) { c.data.alone = true; await enemySays(B, c, "Oh, yeah?! Then I'LL beat you guys MYSELF!"); }
     },
     onDefeat: (B, e) => {
       (async () => { await wait(10); const c = B.enemies.find((x) => x.id === 'cartman' && !x.gone); if (c) c.data.alone = true; })();
@@ -474,9 +475,9 @@ const ENEMIES = {
   },
   cartman: {
     name: 'Cartman', hp: 2000, atk: 15, def: 3, money: 0, voice: 'cartman', tiredAt: 0,
-    check: '* CARTMAN - ATK 15 DEF 3\n* O Imperador do Mundo Sombrio. Diz que não é gordo, tem ossos largos.',
-    flavor: (B, e) => e.data.alone ? U.pick(['* Cartman bate o pé no chão.', '* Cartman está ficando vermelho de raiva.', '* O Imperador perdeu o cavaleiro. E a paciência.'])
-      : U.pick(['* O Imperador Cartman ergue o cetro de Cheesy Poof.', '* Cartman exige que todos respeitem sua autoridade.', '* Cheiro de frango frito e arrogância.']),
+    check: "* CARTMAN - ATK 15 DEF 3\n* Emperor of the Dark World. He's not fat, he's big-boned.",
+    flavor: (B, e) => e.data.alone ? U.pick(['* Cartman stomps his feet.', '* Cartman is turning red with rage.', '* The Emperor lost his knight. And his patience.'])
+      : U.pick(['* Emperor Cartman raises his Cheesy Poof scepter.', '* Cartman demands that everyone respect his authoritah.', '* Smells like fried chicken and arrogance.']),
     art: (B, e, f) => {
       let expr = e.data.alone ? 'angry' : 'smug';
       if (e.mercy >= 100) expr = 'sad';
@@ -486,36 +487,36 @@ const ENEMIES = {
       return Spr.enemy('cartman', f, expr, e.data.attack > 0 ? 'attack' : 'idle');
     },
     acts: [
-      { name: 'Respeitar', fn: async (B, e) => { await B.say('* Você se curvou e respeitou a autoridade do Cartman.'); e.data.laugh = 40; await enemySays(B, e, 'ISSO! Finalmente alguém com bom senso!'); B.addMercy(e, 12); } },
-      { name: 'Ossos largos', fn: async (B, e) => { await B.say('* Você disse que o Cartman não é gordo.\n* Ele só tem ossos largos.'); await enemySays(B, e, '...você... você entende!'); B.addMercy(e, 22); } },
-      { name: 'Dar Cheesy Poofs', fn: async (B, e) => {
+      { name: 'Respect', fn: async (B, e) => { await B.say('* You bowed and respected Cartman\'s authoritah.'); e.data.laugh = 40; await enemySays(B, e, 'YES! FINALLY someone with common sense!'); B.addMercy(e, 12); } },
+      { name: 'Big-Boned', fn: async (B, e) => { await B.say("* You told Cartman he isn't fat.\n* He's just big-boned."); await enemySays(B, e, '...You... you GET me!'); B.addMercy(e, 22); } },
+      { name: 'Cheesy Poofs', fn: async (B, e) => {
         const i = G.items.indexOf('cheesy');
-        if (i >= 0) { G.items.splice(i, 1); await B.say('* Você ofereceu um saco de Cheesy Poofs.\n* Cartman devorou tudo em 2 segundos.'); await enemySays(B, e, 'Hmm... CHEESY POOFS!'); B.addMercy(e, 30); }
-        else { await B.say('* Você procurou nos bolsos, mas não tinha Cheesy Poofs.\n* (A loja do Butters vende.)'); B.addMercy(e, 3); }
+        if (i >= 0) { G.items.splice(i, 1); await B.say('* You offered a bag of Cheesy Poofs.\n* Cartman ate the whole thing in two seconds.'); await enemySays(B, e, 'Mmm... CHEESY POOFS!'); B.addMercy(e, 30); }
+        else { await B.say("* You checked your pockets. No Cheesy Poofs.\n* (Butters' shop sells them.)"); B.addMercy(e, 3); }
       } },
-      { name: 'Discutir', req: ['kyle'], fn: async (B, e) => {
-        await memberSays(B, 'kyle', 'CARTMAN, SEU GORDO EGOÍSTA!');
-        await enemySays(B, e, 'EU NÃO SOU GORDO, KYLE! EU TENHO OSSOS LARGOS!');
-        await B.say('* Os dois gritaram um com o outro por cinco minutos.\n* Cartman ficou exausto.');
+      { name: 'Argue', req: ['kyle'], fn: async (B, e) => {
+        await memberSays(B, 'kyle', 'CARTMAN, YOU FATASS!');
+        await enemySays(B, e, "I'M NOT FAT, I'M BIG-BONED, KAHL!");
+        await B.say('* They screamed at each other for five minutes.\n* Cartman is exhausted.');
         B.tire(e);
       } },
-      { name: 'Ligar pra mãe', req: ['kenny'], fn: async (B, e) => {
-        await B.say('* Kenny pegou o celular e ligou para a mãe do Cartman.');
-        await enemySays(B, e, 'MÃE?! Não, mãe, eu tô OCUPADO! ...Sim, eu vou comer legumes.');
+      { name: 'Call Mom', req: ['kenny'], fn: async (B, e) => {
+        await B.say("* Kenny pulled out a phone and called Cartman's mom.");
+        await enemySays(B, e, "MOOOM! No, Mom, I'm BUSY! ...Yes, I'll eat my vegetables.");
         B.addMercy(e, 25);
       } },
     ],
     canSpare: (B, e) => !B.enemies.some((x) => (x.id === 'goomba') && !x.gone),
     onSpareFail: async (B, e, m) => {
-      if (B.enemies.some((x) => x.id === 'goomba' && !x.gone)) await B.say('* Cartman se esconde atrás do Goomba.\n* Ele não vai desistir enquanto tiver um cavaleiro!');
-      else await B.say('* Você tentou poupar o Cartman.\n* Mas o nome dele não estava {y}AMARELO{w}...');
+      if (B.enemies.some((x) => x.id === 'goomba' && !x.gone)) await B.say('* Cartman hides behind Sir Goomba.\n* He won\'t give up while he still has a knight!');
+      else await B.say("* You tried to spare Cartman.\n* But his name wasn't {y}YELLOW{w}...");
     },
     onTurnEnd: async (B, e) => { if (e.data.laugh > 0) e.data.laugh = 0; if (e.data.attack > 0) e.data.attack = 0; },
     talk: (B, e) => {
-      if (e.mercy >= 100) return 'Tá... talvez eu tenha exagerado um pouquinho.';
-      if (e.tired) return 'Hff... hff... vocês... não... respeitam...';
-      if (e.data.alone) return U.pick(['VOCÊS VÃO PAGAR!', 'Sem o Goomba eu sou ainda MAIS forte!', 'Isso é contra as regras do MEU mundo!']);
-      return U.pick(['RESPEITEM MINHA AUTORIDADE!', 'Goomba, ACABA com eles!', 'Neste mundo EU sou o rei!', 'Por que vocês nunca me deixam ganhar?!']);
+      if (e.mercy >= 100) return 'Fine... maybe I went a LITTLE too far.';
+      if (e.tired) return 'Hff... hff... you guys... suck...';
+      if (e.data.alone) return U.pick(['BEEFCAKE! BEEEEFCAKE!', 'Whatever! I do what I want!', "This is MY world! I make the rules!"]);
+      return U.pick(['RESPECT MY AUTHORITAH!', 'Goomba, GET THEM!', "In this world, I'M the king!", 'Why do you guys never let me win?!', 'Screw you guys!']);
     },
     onDefeat: (B, e) => { e.data.cry = true; e.gone = 'defeated'; return false; },
     pickPattern: (B, e) => U.pick(e.data.alone ? ['belly_wave', 'screw_you', 'scepter_beam', 'kfc_buckets', 'authority'] : ['cheesy_storm', 'authority', 'kfc_buckets', 'scepter_beam']),
