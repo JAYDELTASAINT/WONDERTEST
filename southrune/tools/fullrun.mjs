@@ -25,9 +25,13 @@ const log = (...a) => console.log(new Date().toISOString().slice(14, 19), ...a);
 
 async function battle() {
   log('  batalha');
-  for (let i = 0; i < 3000; i++) {
+  const t0 = Date.now();
+  let lastMs = null;
+  while (Date.now() - t0 < 10 * 60 * 1000) {
     const s = await st();
     if (s.mode !== 'battle') { log('  fim da batalha'); return; }
+    if (s.bms === 'qte' && lastMs !== 'qte') log('   HP', await page.evaluate(() => SR.Battle.enemies.map((e) => `${e.id}:${Math.max(0, e.hp)}${e.gone ? '(' + e.gone + ')' : ''}`).join(' ')));
+    lastMs = s.bms;
     await page.evaluate(() => { for (const id of SR.G.party) SR.G.hp[id] = Math.max(SR.G.hp[id], 60); });
     if (s.bc && (s.bms === 'btn' || s.bms === 'enemy')) await press('z', 60);
     else if (s.bms === 'qte') {
@@ -53,7 +57,7 @@ async function settle(max = 400) {
       await press('z', 80);
       continue;
     }
-    if (s.mode === 'field' && s.busy === 0) return s;
+    if ((s.mode === 'field' && s.busy === 0) || s.mode === 'title') return s;
     if (s.mode === 'shop') { await press('x', 100); continue; }
     await sleep(120);
   }
